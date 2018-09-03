@@ -1,0 +1,7 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/Weapons/w_sniper/w_sniper01"
+	"$bumpmap" "models/weapons/w_sniper/w_sniper01_normal"
+	"$model" 1
+	"$selfillum" 1
+}

@@ -1,0 +1,17 @@
+"AddonInfo"
+{
+	"name"		"HL2 Revitalized"
+	"version"	"1.0"
+	"up_date"	"no"
+	"author_name"	"STRAFE"
+	"author_email"	"n/a"
+	"author_url"	"no"
+	
+	"info"		"THINGS"
+
+	// CAPSLOCK IS CRUISE CONTROL FOR COOL!!
+	"GCFRequires"
+	{
+		"0"		"240"
+	}
+}
