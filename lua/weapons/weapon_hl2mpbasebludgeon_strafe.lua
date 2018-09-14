@@ -13,7 +13,8 @@ SWEP.WorldModel			= "models/weapons/w_stunstick.mdl"
 SWEP.CSMuzzleFlashes	= false
 SWEP.HoldType			= "melee"
 SWEP.FiresUnderwater = true
---SWEP.Base = "hlmachinegun_strafe"
+SWEP.Base = "weapon_hl2basehlmpcombatweapon_strafe"
+DEFINE_BASECLASS( "weapon_hl2mpbasehlmpcombatweapon_strafe" )
 AccessorFunc( SWEP, "m_flTimeWeaponIdle", "TimeWeaponIdle" )
 
 SWEP.Primary.ClipSize		= -1
@@ -37,13 +38,8 @@ SWEP.MELEE_HIT = "Weapon_Crowbar.Melee_Hit"
 SWEP.BLUDGEON_HULL_DIM = 16
 
 function SWEP:Initialize()
-	self.m_fMinRange1 = 0
-	self.m_fMinRange2 = 0
-	self.m_fMaxRange1 = 64
-	self.m_fMaxRange2 = 64
+    BaseClass.Initialize(self)
     self:SetHoldType(self.HoldType)
-	self:SetTimeWeaponIdle(CurTime())
-	self.m_nShotsFired = 0
 	self.g_bludgeonMins = Vector(-self.BLUDGEON_HULL_DIM, -self.BLUDGEON_HULL_DIM, -self.BLUDGEON_HULL_DIM)
 	self.g_bludgeonMaxs = Vector(self.BLUDGEON_HULL_DIM, self.BLUDGEON_HULL_DIM, self.BLUDGEON_HULL_DIM)
 end

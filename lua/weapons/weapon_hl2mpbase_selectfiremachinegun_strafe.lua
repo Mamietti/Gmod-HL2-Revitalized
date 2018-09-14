@@ -13,7 +13,7 @@ SWEP.WorldModel			= "models/weapons/w_smg1.mdl"
 SWEP.CSMuzzleFlashes	= false
 SWEP.HoldType			= "smg"
 SWEP.FiresUnderwater = false
-SWEP.Base = "hlmachinegun_strafe"
+SWEP.Base = "weapon_hl2mpbase_machinegun_strafe"
 
 SWEP.Primary.ClipSize		= 30
 SWEP.Primary.DefaultClip	= 90
@@ -38,20 +38,11 @@ SWEP.SPECIAL1 = "Weapon_SMG1.Special1"
 SWEP.SPECIAL2 = "Weapon_SMG1.Special2"
 SWEP.BURST = "Weapon_Pistol.Burst"
 
-DEFINE_BASECLASS( "hlmachinegun_strafe" )
+DEFINE_BASECLASS( "weapon_hl2mpbase_machinegun_strafe" )
 
 function SWEP:Initialize()
-    self:SetNPCMinBurst( 3 )
-    self:SetNPCMaxBurst( 3 )
-    self:SetNPCFireRate( 0.05 )
-    self:SetNPCMinRest( 0 )
-    self:SetNPCMaxRest( 0 )
-	self:SetSaveValue("m_fMinRange1",65)
-	self:SetSaveValue("m_fMinRange2",65)
-	self:SetSaveValue("m_fMaxRange1",1024)
-	self:SetSaveValue("m_fMaxRange2",1024)
     self:SetHoldType(self.HoldType)
-	self:SetTimeWeaponIdle(CurTime())
+	self:SetWeaponIdleTime(CurTime())
 	self:SetNextEmptySoundTime(CurTime())
 	self.m_nShotsFired = 0
 	self.m_iBurstSize = 0
@@ -82,7 +73,7 @@ function SWEP:DoPrimaryAttack()
 	end
 	if self.m_iFireMode==0 then
 		BaseClass.DoPrimaryAttack(self)
-		self:SetTimeWeaponIdle( CurTime() + 3.0 )
+		self:SetWeaponIdleTime( CurTime() + 3.0 )
 	else
 		self.m_iBurstSize = self:GetBurstSize()
 		
@@ -117,7 +108,7 @@ function SWEP:BurstThink()
 	self.m_iBurstSize = self.m_iBurstSize - 1
 
 	if self.m_iBurstSize <= 0 then
-		self:SetTimeWeaponIdle( CurTime() )
+		self:SetWeaponIdleTime( CurTime() )
 		self.NextoThink = nil
 		return
 	end
@@ -156,4 +147,8 @@ end
 
 function SWEP:GetBurstSize()
 	return 3
+end
+
+function SWEP:GetSecondaryAttackActivity()
+    return ACT_VM_SECONDARYATTACK
 end

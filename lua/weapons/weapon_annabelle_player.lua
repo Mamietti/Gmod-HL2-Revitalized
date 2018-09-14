@@ -13,8 +13,8 @@ SWEP.WorldModel			= "models/weapons/w_annabelle.mdl"
 SWEP.CSMuzzleFlashes	= false
 SWEP.HoldType			= "shotgun"
 SWEP.FiresUnderwater = true
-SWEP.Base = "hlmachinegun_strafe"
-DEFINE_BASECLASS( "hlmachinegun_strafe" )
+SWEP.Base = "weapon_hl2mpbasehlmpcombatweapon_strafe"
+DEFINE_BASECLASS( "weapon_hl2mpbasehlmpcombatweapon_strafe" )
 SWEP.ViewModelFOV = 55
 
 SWEP.Primary.ClipSize		= 2
@@ -37,20 +37,11 @@ SWEP.SPECIAL1 = "Weapon_Shotgun.Special1"
 SWEP.m_bReloadsSingly = true
 
 function SWEP:Initialize()
-    self:SetNPCMinBurst( 3 )
-    self:SetNPCMaxBurst( 3 )
-    self:SetNPCFireRate( 0.05 )
-    self:SetNPCMinRest( 0 )
-    self:SetNPCMaxRest( 0 )
-	self:SetSaveValue("m_fMinRange1",0)
-	self:SetSaveValue("m_fMinRange2",0)
-	self:SetSaveValue("m_fMaxRange1",500)
-	self:SetSaveValue("m_fMaxRange2",500)
+    BaseClass.Initialize(self)
     self:SetHoldType(self.HoldType)
-	self:SetTimeWeaponIdle(CurTime())
+	self:SetWeaponIdleTime(CurTime())
 	self:SetNextEmptySoundTime(CurTime())
-	self.m_nShotsFired = 0
-    self.m_flRaiseTime = -3000
+    
     self.m_bDelayedFire1 = false
     self.m_bInReload = false
 end
@@ -65,7 +56,8 @@ function SWEP:DoPrimaryAttack()
 
         self.Owner:SetAnimation( PLAYER_ATTACK1 );
 
-        self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
+        //self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
+        self:SetNextPrimaryFire(CurTime() + self:GetFireRate())
         self:SetClip1(self:Clip1()-1)
 
         local bullet = {}
@@ -79,9 +71,9 @@ function SWEP:DoPrimaryAttack()
         
         self.Owner:ViewPunch( Angle( math.Rand( -2, -1 ), math.Rand( -2, 2 ), 0 ) )
 
-        if self:Clip1()>0 then
-            self.m_bNeedPump = true
-        end
+        --if self:Clip1()>0 then
+            --self.m_bNeedPump = true
+        --end
     end
 end
 
@@ -128,13 +120,18 @@ function SWEP:StartReload()
 
 	self:SetBodygroup(1,0)
 
-	self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
+	self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration()+0.01)
 
 	self.m_bInReload = true
+    
+    if SERVER then
+        self.Owner:SetAnimation( PLAYER_RELOAD )
+    end
+
 	return true
 end
 
-function SWEP:ItemPostFrame()
+function SWEP:Think()
 	if !self.Owner then return end
 	if self.m_bInReload then
 		if self.Owner:KeyDown(IN_ATTACK) and self:Clip1() >=1 then
@@ -166,10 +163,10 @@ function SWEP:ItemPostFrame()
     end
 	if self.Owner:KeyDown(IN_RELOAD) and self:UsesClipsForAmmo1() and !self.m_bInReload then
 		self:StartReload()
-	else 
+	else
 		self.m_bFireOnEmpty = false;
 
-		if !self:HasAnyAmmo() and CurTime()>=self:GetNextPrimaryFire() then
+		if !self:HasAmmo() and CurTime()>=self:GetNextPrimaryFire() then
             return
 		else
 			if self:Clip1() <= 0 and CurTime()>=self:GetNextPrimaryFire() then
@@ -228,7 +225,7 @@ function SWEP:DoReload()
 	self:WeaponSound(self.RELOAD)
 	self:SendWeaponAnimIdeal( ACT_VM_RELOAD )
 
-    self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
+    self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration()+0.01)
 
 	return true
 end
@@ -238,7 +235,7 @@ function SWEP:FinishReload()
         self:SetBodygroup(1,1)
         self.m_bInReload = false
         self:SendWeaponAnimIdeal( ACT_SHOTGUN_RELOAD_FINISH )
-        self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
+        self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration()+0.01)
 	end
 end
 
@@ -254,7 +251,11 @@ function SWEP:FillClip()
 	end
 end
 
-function SWEP:Reload()
+function SWEP:DryFire()
+    self:WeaponSound( self.EMPTY )
+
+    self:SendWeaponAnimIdeal( ACT_VM_DRYFIRE )
+    self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration()+0.01)
 end
 
 function SWEP:Pump()
@@ -264,6 +265,9 @@ function SWEP:Pump()
         self:WeaponSound( self.SPECIAL1 )
 
         self:SendWeaponAnimIdeal( ACT_SHOTGUN_PUMP )
-        self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
+        self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration()+0.01)
     end
+end
+
+function SWEP:Reload()
 end

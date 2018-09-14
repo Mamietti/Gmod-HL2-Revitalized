@@ -7,9 +7,8 @@
 	"author_email"	"n/a"
 	"author_url"	"no"
 	
-	"info"		"THINGS"
+	"info"		"HL2 General improvements"
 
-	// CAPSLOCK IS CRUISE CONTROL FOR COOL!!
 	"GCFRequires"
 	{
 		"0"		"240"

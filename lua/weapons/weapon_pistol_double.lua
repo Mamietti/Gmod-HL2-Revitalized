@@ -13,7 +13,7 @@ SWEP.WorldModel			= "models/weapons/w_alyx_gun.mdl"
 SWEP.CSMuzzleFlashes	= false
 SWEP.HoldType			= "duel"
 SWEP.FiresUnderwater = true
-SWEP.Base = "hlmachinegun_strafe"
+SWEP.Base = "weapon_hl2mpbase_machinegun_strafe"
 SWEP.ViewModelFOV = 55
 
 SWEP.Primary.ClipSize		= 36

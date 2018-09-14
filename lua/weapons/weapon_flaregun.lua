@@ -13,7 +13,7 @@ SWEP.WorldModel			= "models/weapons/w_flaregun.mdl"
 SWEP.CSMuzzleFlashes	= false
 SWEP.HoldType			= "pistol"
 SWEP.FiresUnderwater = true
-SWEP.Base = "hlmachinegun_strafe"
+SWEP.Base = "weapon_hl2mpbasehlmpcombatweapon_strafe"
 SWEP.ViewModelFOV = 55
 
 SWEP.Primary.ClipSize		= 1
@@ -42,7 +42,6 @@ function SWEP:DoPrimaryAttack()
 			self:SendWeaponAnimIdeal(ACT_VM_DRYFIRE)
 			self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
 		end
-		self.m_nShotsFired = self.m_nShotsFired + 1
 
 		self:TakePrimaryAmmo(1)
 		self:SendWeaponAnimIdeal(ACT_VM_PRIMARYATTACK)

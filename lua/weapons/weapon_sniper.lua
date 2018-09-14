@@ -13,9 +13,9 @@ SWEP.WorldModel			= "models/weapons/w_sniper.mdl"
 SWEP.CSMuzzleFlashes	= false
 SWEP.HoldType			= "ar2"
 SWEP.FiresUnderwater = true
-SWEP.Base = "hlmachinegun_strafe"
-DEFINE_BASECLASS( "hlmachinegun_strafe" )
-SWEP.ViewModelFOV = 55
+SWEP.Base = "weapon_hl2mpbasehlmpcombatweapon_strafe"
+DEFINE_BASECLASS( "weapon_hl2mpbasehlmpcombatweapon_strafe" )
+SWEP.ViewModelFOV = 54
 
 SWEP.Primary.ClipSize		= 1
 SWEP.Primary.DefaultClip	= 5
@@ -125,7 +125,7 @@ function SWEP:DoReload()
             self.Owner:SetFOV(0, 0)
             self.m_nZoomLevel = 0
         end       
-		self:SetTimeWeaponIdle(CurTime() + self.Owner:GetViewModel():SequenceDuration())
+		self:SetWeaponIdleTime(CurTime() + self.Owner:GetViewModel():SequenceDuration())
 		self.FireStart = nil
 	end
 end

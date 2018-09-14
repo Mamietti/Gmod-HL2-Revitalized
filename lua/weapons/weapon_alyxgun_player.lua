@@ -13,7 +13,7 @@ SWEP.WorldModel			= "models/weapons/w_alyx_gun.mdl"
 SWEP.CSMuzzleFlashes	= false
 SWEP.HoldType			= "pistol"
 SWEP.FiresUnderwater = true
-SWEP.Base = "hlselectfiremachinegun_strafe"
+SWEP.Base = "weapon_hl2mpbase_selectfiremachinegun_strafe"
 SWEP.ViewModelFOV = 45
 
 SWEP.Primary.ClipSize		= 30
@@ -35,26 +35,6 @@ SWEP.SINGLE = "Weapon_Alyx_Gun.Single"
 SWEP.EMPTY = "Weapon_Pistol.Empty"
 SWEP.DEPLOY = ""
 SWEP.RELOAD = "Weapon_Pistol.Reload"
-
-function SWEP:Initialize()
-    self:SetNPCMinBurst( 3 )
-    self:SetNPCMaxBurst( 3 )
-    self:SetNPCFireRate( 0.05 )
-    self:SetNPCMinRest( 0 )
-    self:SetNPCMaxRest( 0 )
-	self:SetSaveValue("m_fMinRange1",65)
-	self:SetSaveValue("m_fMinRange2",65)
-	self:SetSaveValue("m_fMaxRange1",1024)
-	self:SetSaveValue("m_fMaxRange2",1024)
-    self:SetHoldType(self.HoldType)
-	self:SetTimeWeaponIdle(CurTime())
-	self:SetNextEmptySoundTime(CurTime())
-	self.m_nShotsFired = 0
-	self.m_iBurstSize = 0
-	self.m_iFireMode = 0
-	self.ThinkMode = false
-    self.m_flRaiseTime = -3000
-end
 
 function SWEP:GetDamage()
     return GetConVar("sk_plr_dmg_alyxgun"):GetInt()

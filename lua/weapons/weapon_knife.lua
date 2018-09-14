@@ -13,7 +13,7 @@ SWEP.WorldModel			= "models/weapons/w_combatknife.mdl"
 SWEP.CSMuzzleFlashes	= false
 SWEP.HoldType			= "knife"
 SWEP.FiresUnderwater = true
-SWEP.Base = "hlbludgeonweapon_strafe"
+SWEP.Base = "weapon_hl2mpbasebludgeon_strafe"
 
 SWEP.Primary.ClipSize		= -1
 SWEP.Primary.DefaultClip	= -1

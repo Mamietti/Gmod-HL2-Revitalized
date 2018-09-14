@@ -3,28 +3,324 @@ SWEP.Author			= "Strafe"
 SWEP.Category	= "Half-Life 2 Plus"
 SWEP.Spawnable			= false
 SWEP.AdminOnly			= false
-SWEP.UseHands			= false
-SWEP.ViewModel			= "models/weapons/cstrike/c_smg_mac10.mdl"
-SWEP.WorldModel			= "models/weapons/w_smg_mac10.mdl"
-SWEP.HoldType			= "smg"
+SWEP.UseHands			= true
+SWEP.ViewModel			= "models/weapons/c_357.mdl"
+SWEP.WorldModel			= "models/weapons/w_357.mdl"
+SWEP.HoldType			= "pistol"
 SWEP.Base = "weapon_base"
 
-SWEP.Primary.ClipSize		= -1
-SWEP.Primary.DefaultClip	= -1
-SWEP.Primary.Automatic		= true
+SWEP.Primary.ClipSize		= 6
+SWEP.Primary.DefaultClip	= 6
+SWEP.Primary.Automatic		= false
 SWEP.Primary.Ammo			= "357"
 
 SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
-SWEP.Secondary.Automatic	= false
+SWEP.Secondary.Automatic	= true
 SWEP.Secondary.Ammo			= "none"
 
 SWEP.AutoSwitchTo		= false
 SWEP.AutoSwitchFrom		= false
-
-//AccessorFunc( SWEP, "fNPCMinBurst", 		"NPCMinBurst" )
+SWEP.ViewModelFOV = 54
 
 DEFINE_BASECLASS( "weapon_base" )
+
+VECTOR_CONE_PRECALCULATED = vec3_origin
+VECTOR_CONE_1DEGREES = Vector( 0.00873, 0.00873, 0.00873 )
+VECTOR_CONE_2DEGREES = Vector( 0.01745, 0.01745, 0.01745 )
+VECTOR_CONE_3DEGREES = Vector( 0.02618, 0.02618, 0.02618 )
+VECTOR_CONE_4DEGREES = Vector( 0.03490, 0.03490, 0.03490 )
+VECTOR_CONE_5DEGREES = Vector( 0.04362, 0.04362, 0.04362 )
+VECTOR_CONE_6DEGREES = Vector( 0.05234, 0.05234, 0.05234 )
+VECTOR_CONE_7DEGREES = Vector( 0.06105, 0.06105, 0.06105 )
+VECTOR_CONE_8DEGREES = Vector( 0.06976, 0.06976, 0.06976 )
+VECTOR_CONE_9DEGREES = Vector( 0.07846, 0.07846, 0.07846 )
+VECTOR_CONE_10DEGREES = Vector( 0.08716, 0.08716, 0.08716 )
+VECTOR_CONE_15DEGREES = Vector( 0.13053, 0.13053, 0.13053 )
+VECTOR_CONE_20DEGREES = Vector( 0.17365, 0.17365, 0.17365 )
+
+SWEP.m_bMeleeWeapon = false
+
+AccessorFunc( SWEP, "m_flTimeWeaponIdle", "WeaponIdleTime" )
+AccessorFunc( SWEP, "m_flNextEmptySoundTime", "NextEmptySoundTime")
+
+SWEP.SINGLE = "Weapon_357.Single"
+SWEP.EMPTY = "Weapon_Pistol.Empty"
+SWEP.DEPLOY = ""
+SWEP.RELOAD = "Weapon_SMG1.Reload"
+SWEP.SPECIAL1 = ""
+SWEP.SPECIAL2 = ""
+
+function SWEP:Initialize()
+    self:SetWeaponIdleTime(0)
+    self:SetNextEmptySoundTime(0)
+    self.m_fFireDuration = 0
+end
+
+function SWEP:IsMeleeWeapon()
+	return self.m_bMeleeWeapon
+end
+
+function SWEP:HasWeaponIdleTimeElapsed()
+	if ( CurTime() > self:GetWeaponIdleTime() ) then
+		return true
+    end
+	return false
+end
+
+function SWEP:GetViewModelSequenceDuration()
+    return self.Owner:GetViewModel():SequenceDuration()
+end
+
+function SWEP:Think()
+    if self.Owner:KeyDown(IN_ATTACK) then
+        self.m_fFireDuration = self.m_fFireDuration + FrameTime()
+    else
+        self.m_fFireDuration = 0
+    end
+    
+	if !(self.Owner:KeyDown(IN_ATTACK) or self.Owner:KeyDown(IN_ATTACK2) or (self:CanReload() and self.Owner:KeyDown(IN_RELOAD))) then
+		if self:GetSaveTable().m_bInReload == false and !self:ReloadOrSwitchWeapons() then
+			self:WeaponIdle()
+		end
+	end
+end
+
+function SWEP:CanReload()
+	return true
+end
+
+function SWEP:ReloadOrSwitchWeapons()
+	if self.Owner then
+		self:SetSaveValue( "m_bFireOnEmpty", false ) 
+		if !self:HasAnyAmmo() and (CurTime()>self:GetNextPrimaryFire()) and (CurTime()>self:GetNextSecondaryFire()) then
+			return false
+		else
+			if self:UsesClipsForAmmo1() and self:Clip1()==0 and (CurTime()>self:GetNextPrimaryFire()) and (CurTime()>self:GetNextSecondaryFire()) then
+				if self:DoReload() then
+					return true
+				end
+			end
+		end
+		return false
+	end
+end
+
+function SWEP:ReloadsSingly()
+	return self:GetSaveTable().m_bReloadsSingly
+end
+
+function SWEP:WeaponIdle()
+    if self:HasWeaponIdleTimeElapsed() then
+        self:SendWeaponAnimIdeal(ACT_VM_IDLE)
+    end
+end
+
+function SWEP:SendWeaponAnimIdeal(act)
+    self:SendWeaponAnim(act)
+    self:SetWeaponIdleTime(CurTime() + self:GetViewModelSequenceDuration())
+end
+
+function SWEP:SecondaryAttack()
+	if self:UsesSecondaryAmmo() and self:Ammo2()<=0 then
+		if CurTime > self:GetNextEmptySoundTime() then
+			self:WeaponSound(self.EMPTY)
+			temps = CurTime() + 0.5
+			self:SetNextSecondaryFire(temps)
+			self:SetNextEmptySoundTime(temps)
+		end
+	elseif self.Owner:WaterLevel()==3 and !self:GetSaveTable().m_bAltFiresUnderwater then
+		self:WeaponSound(self.EMPTY)
+		self:SetNextEmptySoundTime(CurTime() + 0.2)
+	else
+		self:DoSecondaryAttack()
+		if self:UsesClipsForAmmo2() then
+			if self:Clip1()<1 then
+				self.Owner:RemoveAmmo( 1, self.Secondary.Ammo )
+				self:SetClip1(self:Clip1()+1)
+			end
+		end
+	end
+end
+
+function SWEP:PrimaryAttack()
+	if !self:IsMeleeWeapon() and ((self:UsesClipsForAmmo1() and self:Clip1()<=0) or (!self:UsesClipsForAmmo1() and self:Ammo1()<=0)) then
+		self:HandleFireOnEmpty()
+	elseif self.Owner:WaterLevel()==3 and !self:GetSaveTable().m_bFiresUnderwater then
+		self:WeaponSound(self.EMPTY)
+		self:SetNextPrimaryFire(CurTime() + 0.2)
+	else
+		if self.FireStart==nil then
+			self.FireStart = CurTime()
+		end
+		self:DoPrimaryAttack()
+	end
+end
+
+function SWEP:DoSecondaryAttack()
+end
+
+function SWEP:UsesClipsForAmmo1()
+	return self.Primary.ClipSize!=-1
+end
+
+function SWEP:UsesClipsForAmmo2()
+	return self.Secondary.ClipSize!=-1
+end
+
+function SWEP:UsesPrimaryAmmo()
+	return (self.Primary.Ammo == "None")
+end
+
+function SWEP:UsesSecondaryAmmo()
+	return (self.Secondary.Ammo == "None")
+end
+
+function SWEP:HandleFireOnEmpty()
+	if self:GetSaveTable().m_bFireOnEmpty then
+		self:ReloadOrSwitchWeapons()
+		self.m_fFireDuration = 0
+	else
+		if CurTime() > self:GetNextEmptySoundTime() then
+			self:WeaponSound(self.EMPTY)
+			temps = CurTime() + 0.5
+			self:SetNextEmptySoundTime(temps)
+		end
+		self:SetSaveValue( "m_bFireOnEmpty", true )
+	end
+end
+
+function SWEP:GetFireRate()
+	return 0
+end
+
+function SWEP:WeaponSound(sound)
+	self:EmitSound(sound)
+end
+
+function SWEP:ReloadOrSwitchWeapons()
+	if self.Owner then
+		self:SetSaveValue( "m_bFireOnEmpty", false ) 
+		if !self:HasAmmo() and (CurTime()>self:GetNextPrimaryFire()) and (CurTime()>self:GetNextSecondaryFire()) then
+			return false
+		else
+			if self:UsesClipsForAmmo1() and self:Clip1()==0 and (CurTime()>self:GetNextPrimaryFire()) and (CurTime()>self:GetNextSecondaryFire()) then
+				if self:DoReload() then
+					return true
+				end
+			end
+		end
+		return false
+	end
+end
+
+function SWEP:DoReload()
+	if self:BaseDefaultReload(ACT_VM_RELOAD) then
+		self:SetWeaponIdleTime(CurTime() + self.Owner:GetViewModel():SequenceDuration())
+	end
+end
+
+function SWEP:Reload()
+    self:DoReload()
+end
+
+function SWEP:BaseDefaultReload(iActivity)
+	if !self.Owner then
+		return false
+	end
+
+	if self:Ammo1() <= 0 then
+		return false
+	end
+
+	bReload = false
+
+	if self:UsesClipsForAmmo1() then
+		primary	= math.min(self.Primary.ClipSize - self:Clip1(), self:Ammo1())
+		if primary != 0 then
+			bReload = true
+		end
+	end
+
+	if self:UsesClipsForAmmo2() then
+		secondary = math.min(self.Secondary.ClipSize - self:Clip2(), self:Ammo2())
+		if primary != 0 then
+			bReload = true
+		end
+	end
+
+	if !bReload then
+		return false
+	end
+
+	self:EmitSound(self.RELOAD)
+	self:SendWeaponAnimIdeal( iActivity )
+
+	if self.Owner:IsPlayer() then
+		self.Owner:SetAnimation( PLAYER_RELOAD )
+	end
+
+	flSequenceEndTime = CurTime() + self.Owner:GetViewModel():SequenceDuration()
+	self:SetNextPrimaryFire(flSequenceEndTime)
+	self:SetNextSecondaryFire(flSequenceEndTime)
+    self:SetWeaponIdleTime(flSequenceEndTime)
+    
+
+	self:SetSaveValue( "m_bInReload", true )
+	
+	return true
+end
+
+function SWEP:DoPrimaryAttack()
+	if self:UsesClipsForAmmo1() and !self:Clip1() then
+		self:DoReload()
+		return
+    end
+
+	if self.Owner then
+
+        self:MuzzleFlash()
+
+        self:SendWeaponAnimIdeal( self:GetPrimaryAttackActivity() )
+
+        self.Owner:SetAnimation( PLAYER_ATTACK1 );
+		local bullet = {}
+		bullet.Src 		= self.Owner:GetShootPos()			-- Source
+		bullet.Dir 		= self.Owner:GetAimVector()			-- Dir of bullet
+		bullet.Spread 	= self:GetBulletSpread()		-- Aim Cone
+		bullet.Tracer	= 2									-- Show a tracer on every x bullets 
+		bullet.AmmoType = self.Primary.Ammo
+		bullet.Damage = self:GetDamage()
+        
+        self:WeaponSound(self.SINGLE)
+        fireRate = self:GetFireRate()
+        self:SetNextPrimaryFire(CurTime() + fireRate)
+
+        if self:UsesClipsForAmmo1() then
+            self:SetClip1(self:Clip1()-1)
+        else
+            self:RemoveAmmo(1, self.Primary.AmmoType)
+        end
+        
+        self.Owner:FireBullets(bullet)
+        self:AddViewKick()
+    end
+end
+
+function SWEP:GetDamage()
+	return 30
+end
+
+function SWEP:AddViewKick()
+end
+
+function SWEP:GetPrimaryAttackActivity()
+	return ACT_VM_PRIMARYATTACK
+end
+
+function SWEP:GetBulletSpread()
+	return Vector(0.03,0.03,0)
+end
 
 --[[
 LightingOrigin	=	

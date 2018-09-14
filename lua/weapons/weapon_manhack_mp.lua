@@ -13,6 +13,7 @@ SWEP.WorldModel			= "models/weapons/w_manhack.mdl"
 SWEP.CSMuzzleFlashes	= false
 SWEP.HoldType			= "slam"
 SWEP.FiresUnderwater = false
+SWEP.Base               = "weapon_hl2mpbasehlmpcombatweapon_strafe"
 
 SWEP.Primary.ClipSize		= -1
 SWEP.Primary.DefaultClip	= 1
@@ -27,6 +28,7 @@ SWEP.AutoSwitchTo		= false
 SWEP.AutoSwitchFrom		= false
 
 SWEP.NextDeploy = nil
+
 function SWEP:PrimaryAttack()
     if self:Ammo1()>0 then
         self:SendWeaponAnim( ACT_VM_THROW )
