@@ -46,6 +46,24 @@ function SWEP:Initialize()
     self.m_bInReload = false
 end
 
+function SWEP:Deploy()
+    print("DIPS")
+    if CLIENT then
+        self.Owner:GetViewModel():SetMaterial("models/weapons/v_shotgun/vshotgun_albedo_annabelle")
+    end
+    BaseClass.Deploy(self)
+    self:CallOnClient( 'Deploy' )
+    return true
+end
+
+function SWEP:Holster()
+    print("HOES")
+    if CLIENT then
+        self.Owner:GetViewModel():SetMaterial("")
+    end
+    return true
+end
+
 function SWEP:DoPrimaryAttack()
 	if self.Owner then
         self:WeaponSound(self.SINGLE)
@@ -56,8 +74,7 @@ function SWEP:DoPrimaryAttack()
 
         self.Owner:SetAnimation( PLAYER_ATTACK1 );
 
-        //self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
-        self:SetNextPrimaryFire(CurTime() + self:GetFireRate())
+        self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
         self:SetClip1(self:Clip1()-1)
 
         local bullet = {}
@@ -71,9 +88,9 @@ function SWEP:DoPrimaryAttack()
         
         self.Owner:ViewPunch( Angle( math.Rand( -2, -1 ), math.Rand( -2, 2 ), 0 ) )
 
-        --if self:Clip1()>0 then
-            --self.m_bNeedPump = true
-        --end
+        if self:Clip1()>0 then
+            self.m_bNeedPump = true
+        end
     end
 end
 
