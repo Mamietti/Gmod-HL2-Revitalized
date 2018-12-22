@@ -41,13 +41,18 @@ SWEP.BURST = "Weapon_Pistol.Burst"
 DEFINE_BASECLASS( "weapon_hl2mpbase_machinegun_strafe" )
 
 function SWEP:Initialize()
-    self:SetHoldType(self.HoldType)
-	self:SetWeaponIdleTime(CurTime())
-	self:SetNextEmptySoundTime(CurTime())
-	self.m_nShotsFired = 0
-	self.m_iBurstSize = 0
-	self.m_iFireMode = 0
-	self.ThinkMode = false
+    BaseClass.Initialize( self )
+	self:SetThinkMode(false)
+    self:SetBurstSize(0)
+end
+
+function SWEP:SetupDataTables()
+    BaseClass.SetupDataTables( self )
+    self:NetworkVar( "Int" , 2 , "BurstSize" )
+    self:NetworkVar( "Int" , 3 , "FireMode" )
+    self:NetworkVar( "Bool" , 4 , "ThinkMode" )
+    self:NetworkVar( "Float" , 5 , "NextThink" )
+    self:NetworkVar( "Int" , 0 , "ShotsFired" )
 end
 
 function SWEP:GetBurstCycleRate()
@@ -55,43 +60,43 @@ function SWEP:GetBurstCycleRate()
 end
 
 function SWEP:GetFireRate()
-	if self.m_iFireMode==0 then
+	if self:GetFireMode()==0 then
 		return 0.075
 	else
-		return 0.075
+		return 0.05
 	end
 end
 
 function SWEP:Deploy()
-	self.m_iBurstSize = 0
-	BaseClass.Deploy(self)
+	self:SetBurstSize(0)
+	return BaseClass.Deploy(self)
 end
 
 function SWEP:DoPrimaryAttack()
-	if self:GetSaveTable().m_bFireOnEmpty then
+	if self:GetFireOnEmpty() then
 		return
 	end
-	if self.m_iFireMode==0 then
-		BaseClass.DoPrimaryAttack(self)
+	if self:GetFireMode()==0 then
+		BaseClass.DoPrimaryAttack( self )
 		self:SetWeaponIdleTime( CurTime() + 3.0 )
 	else
-		self.m_iBurstSize = self:GetBurstSize()
+		self:SetBurstSize(self:GetBurstCount())
 		
 		self:BurstThink()
-		self.ThinkMode = true
-		self:SetNextPrimaryFire(CurTime() + self:GetBurstCycleRate())
-		self:SetNextSecondaryFire(CurTime() + self:GetBurstCycleRate())
+		self:SetThinkMode(true)
+		--self:SetNextPrimaryFire(CurTime() + self:GetBurstCycleRate())
+		--self:SetNextSecondaryFire(CurTime() + self:GetBurstCycleRate())
 
-		self.NextoThink = CurTime() + self:GetFireRate()
+		self:SetNextThink(CurTime() + self:GetFireRate())
 	end
 end
 
 function SWEP:DoSecondaryAttack()
-	if self.m_iFireMode==0 then
-		self.m_iFireMode = 1
+	if self:GetFireMode()==0 then
+		self:SetFireMode(1)
 		self:EmitSound(self.SPECIAL2)
 	else
-		self.m_iFireMode = 0
+		self:SetFireMode(0)
 		self:EmitSound(self.SPECIAL1)
 	end
 	
@@ -101,28 +106,33 @@ function SWEP:DoSecondaryAttack()
 end
 
 function SWEP:BurstThink()
-	toot = self:GetNextPrimaryFire()
-	BaseClass.DoPrimaryAttack(self)
-	self:SetNextPrimaryFire(toot)
+	BaseClass.DoPrimaryAttack( self )
 
-	self.m_iBurstSize = self.m_iBurstSize - 1
+	self:SetBurstSize(self:GetBurstSize() - 1)
 
-	if self.m_iBurstSize <= 0 then
+	if self:GetBurstSize() <= 0 then
+        --HACKHACK: Fix broken firerate
+        self:SetNextPrimaryFire(CurTime() + self:GetBurstCycleRate() - (self:GetFireRate() * self:GetBurstCount()))
+        self:SetNextSecondaryFire(CurTime() + self:GetBurstCycleRate() - (self:GetFireRate() * self:GetBurstCount()))
+        
+        --The burst is over!
+		self:SetThinkMode(false)
+        
+        --idle immediately to stop the firing animation
 		self:SetWeaponIdleTime( CurTime() )
-		self.NextoThink = nil
 		return
 	end
-	self.NextoThink = CurTime() + self:GetFireRate()
+	self:SetNextThink(CurTime() + self:GetFireRate())
 end
 
 function SWEP:WeaponSound(sound)
 	if sound == self.SINGLE then
-		if self.m_iFireMode==0 then
+		if self:GetFireMode()==0 then
 			self:EmitSound(sound)
 		else
-			if( self.m_iBurstSize == self:GetBurstSize() and self:Clip1() >= self.m_iBurstSize ) then
+			if( self:GetBurstSize() == self:GetBurstCount() and self:Clip1() >= self:GetBurstSize() ) then
 				self:EmitSound(self.BURST)
-			elseif( self:Clip1() < self.m_iBurstSize ) then
+			elseif( self:Clip1() < self:GetBurstSize() ) then
 				self:EmitSound(sound)
 			end
 		end
@@ -135,17 +145,18 @@ function SWEP:AddViewKick()
 end
 
 function SWEP:Think()
-	if self.ThinkMode then
-		if self.NextoThink!=nil then
-			if CurTime()>self.NextoThink then
+	if self:GetThinkMode() then
+		if self:GetNextThink()!=nil then
+            if CurTime()>self:GetNextThink() then
 				self:BurstThink()
 			end
 		end
-	end
-	BaseClass.Think(self)
+    else
+        BaseClass.Think(self)
+    end
 end
 
-function SWEP:GetBurstSize()
+function SWEP:GetBurstCount()
 	return 3
 end
 

@@ -36,15 +36,17 @@ SWEP.EMPTY = "Weapon_Pistol.Empty"
 SWEP.DEPLOY = ""
 SWEP.RELOAD = "Weapon_Pistol.Reload"
 
+DEFINE_BASECLASS( "weapon_hl2mpbase_selectfiremachinegun_strafe" )
+
 function SWEP:GetDamage()
     return GetConVar("sk_plr_dmg_alyxgun"):GetInt()
 end
 
 function SWEP:GetFireRate()
-	if self.m_iFireMode==0 then
+	if self:GetFireMode()==0 then
 		return 0.1
 	else
-		return 0.075
+		return 0.05
 	end
 end
 
@@ -57,13 +59,13 @@ function SWEP:OnDrop()
 end
 
 function SWEP:AddViewKick()
-    self:DoMachineGunKick( 1, self:GetSaveTable().m_fFireDuration, 5)
+    self:DoMachineGunKick( 1, self:GetFireDuration(), 5)
 end
 
 function SWEP:HandleFireOnEmpty()
-	if self:GetSaveTable().m_bFireOnEmpty then
+	if self:GetFireOnEmpty() then
 		self:ReloadOrSwitchWeapons()
-		self:SetSaveValue( "m_fFireDuration", 0 )
+		self:SetFireDuration(0)
 	else
 		if CurTime() > self:GetNextEmptySoundTime() then
 			self:WeaponSound(self.EMPTY)
@@ -71,6 +73,6 @@ function SWEP:HandleFireOnEmpty()
 			self:SetNextEmptySoundTime(temps)
             self:SendWeaponAnimIdeal(ACT_VM_DRYFIRE)
 		end
-		self:SetSaveValue( "m_bFireOnEmpty", true )
+		self:SetFireOnEmpty(true)
 	end
 end

@@ -15,7 +15,6 @@ SWEP.HoldType			= "melee"
 SWEP.FiresUnderwater = true
 SWEP.Base = "weapon_hl2basehlmpcombatweapon_strafe"
 DEFINE_BASECLASS( "weapon_hl2mpbasehlmpcombatweapon_strafe" )
-AccessorFunc( SWEP, "m_flTimeWeaponIdle", "TimeWeaponIdle" )
 
 SWEP.Primary.ClipSize		= -1
 SWEP.Primary.DefaultClip	= -1
@@ -59,12 +58,12 @@ end
 function SWEP:WeaponIdle()
 	if self:HasIdleTimeElapsed() then
 		self:SendWeaponAnim(ACT_VM_IDLE)
-		self:SetTimeWeaponIdle(CurTime() + self.Owner:GetViewModel():SequenceDuration())
+		self:SetWeaponIdleTime(CurTime() + self.Owner:GetViewModel():SequenceDuration())
 	end
 end
 
 function SWEP:HasIdleTimeElapsed()
-	if CurTime()>=self:GetTimeWeaponIdle() then
+	if CurTime()>=self:GetWeaponIdleTime() then
 		return true
 	end
 	return false
@@ -162,7 +161,7 @@ function SWEP:ImpactWater(start, endpos)
 	end
 
 	if bit.band( util.PointContents( endpos ), CONTENTS_WATER ) != CONTENTS_WATER then
-		return false;
+		return false
 	end
 	
 	waterTrace = util.TraceLine({ start = start, endpos = endpos, mask = CONTENTS_WATER, filter=self.Owner, collisiongroup=COLLISION_GROUP_NONE })
@@ -262,7 +261,7 @@ function SWEP:Swing(IsSecondary)
 	end
 
 	self:SendWeaponAnim( nHitActivity )
-	self:SetTimeWeaponIdle(CurTime() + self:SequenceDuration())
+	self:SetWeaponIdleTime(CurTime() + self:SequenceDuration())
 
 	self:SetNextPrimaryFire(CurTime() + self:GetFireRate())
 	self:SetNextSecondaryFire(CurTime() + self:SequenceDuration())

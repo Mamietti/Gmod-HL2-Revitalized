@@ -1,13 +1,13 @@
-SWEP.PrintName			= "Test SMG"
+SWEP.PrintName			= "Test SMG COMBAWE"
 SWEP.Author			= "Strafe"
 SWEP.Category	= "Half-Life 2 Plus"
 SWEP.Spawnable			= false
-SWEP.AdminOnly			= false
+SWEP.AdminOnly			= true
 SWEP.UseHands			= true
 SWEP.ViewModel			= "models/weapons/c_357.mdl"
 SWEP.WorldModel			= "models/weapons/w_357.mdl"
 SWEP.HoldType			= "smg"
-SWEP.Base = "basehlcombatweapon_shared_strafe"
+SWEP.Base = "basecombatweapon_shared_strafe"
 
 SWEP.Primary.ClipSize		= 6
 SWEP.Primary.DefaultClip	= 6
@@ -23,7 +23,7 @@ SWEP.AutoSwitchTo		= false
 SWEP.AutoSwitchFrom		= false
 SWEP.ViewModelFOV = 54
 
-DEFINE_BASECLASS( "basehlcombatweapon_shared_strafe" )
+DEFINE_BASECLASS( "basecombatweapon_shared_strafe" )
 
 SWEP.SINGLE = "Weapon_357.Single"
 SWEP.EMPTY = "Weapon_Pistol.Empty"
@@ -32,9 +32,15 @@ SWEP.RELOAD = "Weapon_SMG1.Reload"
 SWEP.SPECIAL1 = ""
 SWEP.SPECIAL2 = ""
 
+function SWEP:SetupDataTables()
+    BaseClass.SetupDataTables( self )
+    self:NetworkVar( "Bool" , 3 , "Lowered" )
+    self:NetworkVar( "Float" , 4 , "RaiseTime" )
+end
+
 function SWEP:Initialize()
     BaseClass.Initialize(self)
-    self.m_flRaiseTime = -3000
+    self:SetRaiseTime(-3000)
 end
 
 function SWEP:CanLower()
@@ -45,25 +51,26 @@ function SWEP:CanLower()
 end
 
 function SWEP:Lower()
-	if self:CanLower() then
-		self:SetSaveValue( "m_bLowered", true )
-		return true
+	if self.Owner:GetViewModel():SelectWeightedSequence( ACT_VM_LOWERED_TO_IDLE ) == ACTIVITY_NOT_AVAILABLE then
+		return false
 	end
+    self:SetLowered(true)
+    return true
 end
 
 function SWEP:Deploy()
 	if self.Owner and self.Owner:IsPlayer() then
 		if self:IsWeaponLowered() then
-			if self:CanLower() then
-				self:SetSaveValue( "m_bLowered", true)
+			if self.Owner:GetViewModel():SelectWeightedSequence( ACT_VM_LOWERED_TO_IDLE ) != ACTIVITY_NOT_AVAILABLE then
+				self:SetLowered(true)
 				self:SetNextPrimaryFire(CurTime() + 1.0)
 				self:SetNextSecondaryFire(CurTime() + 1.0)
 				return true
 			end
 		end
 	end
-	self:SetSaveValue( "m_bLowered", false )
-	return true
+	self:SetLowered(false)
+	return BaseClass.Deploy(self)
 end
 
 function SWEP:IsWeaponLowered()
@@ -86,10 +93,7 @@ function SWEP:IsWeaponLowered()
 end
 
 function SWEP:WeaponShouldBeLowered()
-	if table.HasValue({ACT_VM_IDLE_LOWERED,ACT_VM_IDLE,ACT_VM_IDLE_TO_LOWERED,ACT_VM_LOWERED_TO_IDLE},self:GetSaveTable().m_IdealActivity) then
-		if self:GetSaveTable().m_bLowered then
-			return true
-		end
+	if !table.HasValue({ACT_VM_IDLE_LOWERED,ACT_VM_IDLE,ACT_VM_IDLE_TO_LOWERED,ACT_VM_LOWERED_TO_IDLE}, self:GetSaveTable().m_iIdealActivity) then
 		if self:IsWeaponLowered() then
 			return true
 		end
@@ -110,7 +114,7 @@ function SWEP:WeaponIdle()
 			self:SendWeaponAnimIdeal(ACT_VM_IDLE_LOWERED)
 		end
 	else
-        if CurTime() > self.m_flRaiseTime and self:GetActivity() == ACT_VM_IDLE_LOWERED then
+        if CurTime() > self:GetRaiseTime() and self:GetActivity() == ACT_VM_IDLE_LOWERED then
             self:SendWeaponAnimIdeal(ACT_VM_IDLE)
         elseif self:HasWeaponIdleTimeElapsed() then
 			self:SendWeaponAnimIdeal(ACT_VM_IDLE)
@@ -122,7 +126,21 @@ function SWEP:Ready()
 	if self.Owner:GetViewModel():SelectWeightedSequence( ACT_VM_LOWERED_TO_IDLE ) == ACTIVITY_NOT_AVAILABLE then
 		return false
 	end
-	self:SetSaveValue( "m_bLowered", false )
-	self.m_flRaiseTime = CurTime() + 0.5
+	self:SetLowered(false)
+	self:SetRaiseTime(CurTime() + 0.5)
 	return true
+end
+
+--HACKHACK: Glitchy lowered idle animation
+function SWEP:HasWeaponIdleTimeElapsed()
+    if self:WeaponShouldBeLowered() then
+        if ( CurTime() > self:GetWeaponIdleTime() - 0.1 ) then
+            return true
+        end
+    else
+        if ( CurTime() > self:GetWeaponIdleTime()) then
+            return true
+        end
+    end
+	return false
 end

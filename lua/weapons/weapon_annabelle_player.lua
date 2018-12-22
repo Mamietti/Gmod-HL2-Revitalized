@@ -41,27 +41,14 @@ function SWEP:Initialize()
     self:SetHoldType(self.HoldType)
 	self:SetWeaponIdleTime(CurTime())
 	self:SetNextEmptySoundTime(CurTime())
-    
-    self.m_bDelayedFire1 = false
-    self.m_bInReload = false
+    self:SetDelayedFire(false)
+    self:SetInReload(false)
 end
 
-function SWEP:Deploy()
-    print("DIPS")
-    if CLIENT then
-        self.Owner:GetViewModel():SetMaterial("models/weapons/v_shotgun/vshotgun_albedo_annabelle")
-    end
-    BaseClass.Deploy(self)
-    self:CallOnClient( 'Deploy' )
-    return true
-end
-
-function SWEP:Holster()
-    print("HOES")
-    if CLIENT then
-        self.Owner:GetViewModel():SetMaterial("")
-    end
-    return true
+function SWEP:SetupDataTables()
+    BaseClass.SetupDataTables(self)
+    self:NetworkVar( "Bool" , 4 , "DelayedFire" )
+    self:NetworkVar( "Bool" , 5 , "NeedPump" )
 end
 
 function SWEP:DoPrimaryAttack()
@@ -89,13 +76,17 @@ function SWEP:DoPrimaryAttack()
         self.Owner:ViewPunch( Angle( math.Rand( -2, -1 ), math.Rand( -2, 2 ), 0 ) )
 
         if self:Clip1()>0 then
-            self.m_bNeedPump = true
+            self:SetNeedPump(true)
         end
     end
 end
 
 function SWEP:GetDamage()
     return GetConVar("sk_plr_dmg_357"):GetInt()
+end
+
+function SWEP:GetBulletSpread()
+    return VECTOR_CONE_PRECALCULATED
 end
 
 function SWEP:GetFireRate()
@@ -116,7 +107,7 @@ function SWEP:StartReload()
     end
 
 	if self:Ammo1() <= 0 then
-		return falses
+		return false
     end
 
 	if self:Clip1() >= self:GetMaxClip1() then
@@ -124,7 +115,7 @@ function SWEP:StartReload()
     end
     
     if self:Clip1() <= 0 then
-        self.m_bNeedPump = true
+        self:SetNeedPump(true)
     end
 
 	j = math.min(1, self:Ammo1())
@@ -137,9 +128,9 @@ function SWEP:StartReload()
 
 	self:SetBodygroup(1,0)
 
-	self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration()+0.01)
+	self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
 
-	self.m_bInReload = true
+	self:SetInReload(true)
     
     if SERVER then
         self.Owner:SetAnimation( PLAYER_RELOAD )
@@ -148,13 +139,13 @@ function SWEP:StartReload()
 	return true
 end
 
-function SWEP:Think()
+function SWEP:ItemPreFrame()
 	if !self.Owner then return end
-	if self.m_bInReload then
+	if self:GetInReload() then
 		if self.Owner:KeyDown(IN_ATTACK) and self:Clip1() >=1 then
-			self.m_bInReload = false
-			self.m_bNeedPump = false
-			self.m_bDelayedFire1 = true
+			self:SetInReload(false)
+			self:SetNeedPump(false)
+			self:SetDelayedFire(true)
 		elseif CurTime() >= self:GetNextPrimaryFire() then
 			if self:Ammo1() <=0 then
 				self:FinishReload()
@@ -170,18 +161,18 @@ function SWEP:Think()
 	else
 		self:SetBodygroup(1,1)
     end
-	if self.m_bNeedPump and CurTime()>=self:GetNextPrimaryFire() then
+	if self:GetNeedPump() and CurTime()>=self:GetNextPrimaryFire() then
 		self:Pump()
 		return
     end
-    if self.m_bDelayedFire1 and CurTime()>=self:GetNextPrimaryFire() then
-        self.m_bDelayedFire1 = false
+    if self:GetDelayedFire() and CurTime()>=self:GetNextPrimaryFire() then
+        self:SetDelayedFire(false)
         self:DoPrimaryAttack()
     end
-	if self.Owner:KeyDown(IN_RELOAD) and self:UsesClipsForAmmo1() and !self.m_bInReload then
+	if self.Owner:KeyDown(IN_RELOAD) and self:UsesClipsForAmmo1() and !self:GetInReload() then
 		self:StartReload()
 	else
-		self.m_bFireOnEmpty = false;
+		self:SetFireOnEmpty(false)
 
 		if !self:HasAmmo() and CurTime()>=self:GetNextPrimaryFire() then
             return
@@ -216,7 +207,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:DoReload()
-	if !self.m_bInReload then
+	if !self:GetInReload() then
 		print("called in fail")
 	end
 	
@@ -242,7 +233,7 @@ function SWEP:DoReload()
 	self:WeaponSound(self.RELOAD)
 	self:SendWeaponAnimIdeal( ACT_VM_RELOAD )
 
-    self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration()+0.01)
+    self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
 
 	return true
 end
@@ -250,9 +241,9 @@ end
 function SWEP:FinishReload()
 	if self.Owner then
         self:SetBodygroup(1,1)
-        self.m_bInReload = false
+        self:SetInReload(false)
         self:SendWeaponAnimIdeal( ACT_SHOTGUN_RELOAD_FINISH )
-        self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration()+0.01)
+        self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
 	end
 end
 
@@ -272,17 +263,17 @@ function SWEP:DryFire()
     self:WeaponSound( self.EMPTY )
 
     self:SendWeaponAnimIdeal( ACT_VM_DRYFIRE )
-    self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration()+0.01)
+    self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
 end
 
 function SWEP:Pump()
 	if self.Owner then
-        self.m_bNeedPump = false
+        self:SetNeedPump(false)
         
         self:WeaponSound( self.SPECIAL1 )
 
         self:SendWeaponAnimIdeal( ACT_SHOTGUN_PUMP )
-        self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration()+0.01)
+        self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
     end
 end
 

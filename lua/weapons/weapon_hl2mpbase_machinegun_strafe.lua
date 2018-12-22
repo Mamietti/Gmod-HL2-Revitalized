@@ -2,7 +2,7 @@ SWEP.PrintName			= "Test SMG"
 SWEP.Author			= "Strafe"
 SWEP.Category	= "Half-Life 2 Plus"
 SWEP.Spawnable			= false
-SWEP.AdminOnly			= false
+SWEP.AdminOnly			= true
 SWEP.UseHands			= true
 SWEP.ViewModel			= "models/weapons/c_smg1.mdl"
 SWEP.WorldModel			= "models/weapons/w_smg1.mdl"
@@ -34,16 +34,24 @@ SWEP.SPECIAL2 = ""
 
 function SWEP:Initialize()
     BaseClass.Initialize(self)
-    self.m_nShotsFired = 0
+    self:SetShotsFired(0)
+end
+
+function SWEP:SetupDataTables()
+    BaseClass.SetupDataTables( self )
+    self:NetworkVar( "Int" , 0 , "ShotsFired" )
+end
+
+function SWEP:GetBulletSpread()
+    return VECTOR_CONE_3DEGREES
 end
 
 function SWEP:DoPrimaryAttack()
-	if self:UsesClipsForAmmo1() and !self:Clip1() then
-		self:DoReload()
-		return
+	if (self:UsesClipsForAmmo1() and self:Clip1()<=0) or (!self:UsesClipsForAmmo1() and self.Owner:GetAmmoCount(self.Primary.Ammo)) then
+        return
     end
 
-    self.m_nShotsFired = self.m_nShotsFired + 1
+    self:SetShotsFired(self:GetShotsFired() + 1)
     
 	if self.Owner then
 
@@ -51,14 +59,14 @@ function SWEP:DoPrimaryAttack()
 
         self:SendWeaponAnimIdeal( self:GetPrimaryAttackActivity() )
 
-        self.Owner:SetAnimation( PLAYER_ATTACK1 );
-		local bullet = {}
-		bullet.Src 		= self.Owner:GetShootPos()			-- Source
-		bullet.Dir 		= self.Owner:GetAimVector()			-- Dir of bullet
-		bullet.Spread 	= self:GetBulletSpread()		-- Aim Cone
-		bullet.Tracer	= 2									-- Show a tracer on every x bullets 
-		bullet.AmmoType = self.Primary.Ammo
-		bullet.Damage = self:GetDamage()
+        self.Owner:SetAnimation( PLAYER_ATTACK1 )
+		local info = {}
+		info.Src 		= self.Owner:GetShootPos()			-- Source
+		info.Dir 		= self.Owner:GetAimVector()			-- Dir of bullet
+		info.Spread 	= self:GetBulletSpread()		-- Aim Cone
+		info.Tracer	= 2									-- Show a tracer on every x bullets 
+		info.AmmoType = self.Primary.Ammo
+		info.Damage = self:GetDamage()
         
         self:WeaponSound(self.SINGLE)
         fireRate = self:GetFireRate()
@@ -70,9 +78,13 @@ function SWEP:DoPrimaryAttack()
             self:RemoveAmmo(1, self.Primary.AmmoType)
         end
         
-        self.Owner:FireBullets(bullet)
+        self:FireBullets(info)
         self:AddViewKick()
     end
+end
+
+function SWEP:FireBullets(info)
+    self.Owner:FireBullets(info)
 end
 
 function SWEP:DoMachineGunKick( maxVerticleKickAngle, fireDurationTime, slideLimitTime)
@@ -83,7 +95,7 @@ function SWEP:DoMachineGunKick( maxVerticleKickAngle, fireDurationTime, slideLim
 	duration	= math.min(fireDurationTime,slideLimitTime)
 	kickPerc = duration / slideLimitTime
 
-	self.Owner:ViewPunchReset( 10 );
+	self.Owner:ViewPunchReset( 10 )
 
 	vecScratch.x = -( KICK_MIN_X + ( maxVerticleKickAngle * kickPerc ) )
 	vecScratch.y = -( KICK_MIN_Y + ( maxVerticleKickAngle * kickPerc ) ) / 3
@@ -103,12 +115,13 @@ function SWEP:DoMachineGunKick( maxVerticleKickAngle, fireDurationTime, slideLim
 end
 
 function SWEP:Deploy()
-    self.m_nShotsFired = 0
-    return true
+    self:SetShotsFired(0)
+    return BaseClass.Deploy( self )
 end
 
-function SWEP:Think()
+function SWEP:ItemPostFrame()
     if !self.Owner:KeyDown(IN_ATTACK) then
-        self.m_nShotsFired = 0
+        self:SetShotsFired(0)
     end
+    BaseClass.ItemPostFrame( self )
 end
