@@ -1,11 +1,10 @@
-SWEP.PrintName			= "Combat Knife"
+SWEP.PrintName			= "COMBAT KNIFE"
 SWEP.Author			= "Strafe"
-SWEP.Category	= "Half-Life 2 Plus"
-SWEP.Spawnable			= true
+SWEP.Spawnable			= false
 SWEP.AdminOnly			= false
 SWEP.UseHands			= true
-SWEP.Slot				= 1
-SWEP.SlotPos			= 8
+SWEP.Slot				= 0
+SWEP.SlotPos			= 4
 SWEP.DrawAmmo			= true
 SWEP.ViewModel			= "models/weapons/c_combatknife.mdl"
 SWEP.ViewModelFlip = false

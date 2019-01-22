@@ -1,11 +1,10 @@
-SWEP.PrintName			= "Alyx Gun"
+SWEP.PrintName			= "ALYX GUN"
 SWEP.Author			= "Strafe"
-SWEP.Category	= "Half-Life 2"
-SWEP.Spawnable			= true
+SWEP.Spawnable			= false
 SWEP.AdminOnly			= false
 SWEP.UseHands			= true
 SWEP.Slot				= 1
-SWEP.SlotPos			= 8
+SWEP.SlotPos			= 2
 SWEP.DrawAmmo			= true
 SWEP.ViewModel			= "models/weapons/c_alyx_gun.mdl"
 SWEP.ViewModelFlip = false

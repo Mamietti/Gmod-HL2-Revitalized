@@ -1,11 +1,10 @@
-SWEP.PrintName			= "Sniper Rifle"
+SWEP.PrintName			= "SNIPER RIFLE"
 SWEP.Author			= "Strafe"
-SWEP.Category	= "Half-Life 2 Plus"
-SWEP.Spawnable			= true
+SWEP.Spawnable			= false
 SWEP.AdminOnly			= false
 SWEP.UseHands			= true
-SWEP.Slot				= 1
-SWEP.SlotPos			= 8
+SWEP.Slot				= 3
+SWEP.SlotPos			= 3
 SWEP.DrawAmmo			= true
 SWEP.ViewModel			= "models/weapons/c_sniper.mdl"
 SWEP.ViewModelFlip = false

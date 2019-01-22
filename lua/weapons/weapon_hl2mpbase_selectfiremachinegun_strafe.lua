@@ -3,16 +3,9 @@ SWEP.Author			= "Strafe"
 SWEP.Category	= "Half-Life 2 Plus"
 SWEP.Spawnable			= false
 SWEP.AdminOnly			= true
-SWEP.UseHands			= true
-SWEP.Slot				= 2
-SWEP.SlotPos			= 2
-SWEP.DrawAmmo			= true
 SWEP.ViewModel			= "models/weapons/c_smg1.mdl"
-SWEP.ViewModelFlip = false
 SWEP.WorldModel			= "models/weapons/w_smg1.mdl"
-SWEP.CSMuzzleFlashes	= false
 SWEP.HoldType			= "smg"
-SWEP.FiresUnderwater = false
 SWEP.Base = "weapon_hl2mpbase_machinegun_strafe"
 
 SWEP.Primary.ClipSize		= 30
@@ -24,11 +17,6 @@ SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic	= false
 SWEP.Secondary.Ammo			= "none"
-
-SWEP.AutoSwitchTo		= false
-SWEP.AutoSwitchFrom		= false
-
-SWEP.m_bReloadsSingly = false
 
 SWEP.SINGLE = "Weapon_SMG1.Single"
 SWEP.EMPTY = "Weapon_Pistol.Empty"

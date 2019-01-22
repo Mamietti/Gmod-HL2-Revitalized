@@ -1,9 +1,7 @@
 SWEP.PrintName			= "Test SMG"
 SWEP.Author			= "Strafe"
-SWEP.Category	= "Half-Life 2 Plus"
 SWEP.Spawnable			= false
 SWEP.AdminOnly			= true
-SWEP.UseHands			= true
 SWEP.ViewModel			= "models/weapons/c_smg1.mdl"
 SWEP.WorldModel			= "models/weapons/w_smg1.mdl"
 SWEP.HoldType			= "smg"
@@ -18,10 +16,6 @@ SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic	= true
 SWEP.Secondary.Ammo			= "none"
-
-SWEP.AutoSwitchTo		= false
-SWEP.AutoSwitchFrom		= false
-SWEP.ViewModelFOV = 54
 
 DEFINE_BASECLASS( "weapon_hl2mpbasehlmpcombatweapon_strafe" )
 

@@ -1,13 +1,12 @@
 SWEP.PrintName			= "Test SMG NEW BASE"
 SWEP.Author			= "Strafe"
-SWEP.Category	= "Half-Life 2 Plus"
 SWEP.Spawnable			= false
 SWEP.AdminOnly			= true
-SWEP.UseHands			= true
 SWEP.ViewModel			= "models/weapons/c_smg1.mdl"
 SWEP.WorldModel			= "models/weapons/w_smg1.mdl"
 SWEP.HoldType			= "pistol"
 SWEP.Base = "weapon_base"
+SWEP.DrawWeaponInfoBox = false
 
 SWEP.Primary.ClipSize		= 6
 SWEP.Primary.DefaultClip	= 6
@@ -55,10 +54,6 @@ SWEP.m_fMaxRange2 = 1024
 SWEP.m_bMeleeWeapon = false
 SWEP.m_bReloadsSingly = false
 SWEP.m_bFiresUnderwater = false
-
---GetMaxClip1()
---GetMaxClip2()
---GetActivity()
 
 function SWEP:GetBulletSpread()
     return VECTOR_CONE_15DEGREES
@@ -132,10 +127,10 @@ function SWEP:UsesClipsForAmmo2()
 end
 
 function SWEP:Think()
-    self:ItemPreFrame()
     if ( not self.m_bInitialized ) then
 		self:Initialize()
 	end
+    self:ItemPreFrame()
     self:ItemPostFrame()
 end
 
@@ -182,7 +177,7 @@ function SWEP:ItemPostFrame()
 		--no fire buttons down or reloading
 		if !self:ReloadOrSwitchWeapons() and self:GetInReload() == false then
             --HACKHACK: make it care about firing
-            if CurTime() < self:GetNextPrimaryFire() then return end
+            --if CurTime() < self:GetNextPrimaryFire() then return end
 			self:WeaponIdle()
         end
     end
@@ -303,7 +298,7 @@ function SWEP:HasAnyAmmo()
 end
 
 function SWEP:DoReload()
-    return self:DefaultReloadAlt(self:GetMaxClip1(), self:GetMaxClip2(), ACT_VM_RELOAD)
+    return self:DefaultReloadAlt(ACT_VM_RELOAD)
 end
 
 function SWEP:Reload()
@@ -457,12 +452,6 @@ function SWEP:DoPrimaryAttack()
     info.Spread = self:GetBulletSpread()
 
 	self.Owner:FireBullets( info )
-
-	-- if (!m_iClip1 && pPlayer->GetAmmoCount(m_iPrimaryAmmoType) <= 0)
-	-- {
-		-- // HEV suit - indicate out of ammo condition
-		-- pPlayer->SetSuitUpdate("!HEV_AMO0", FALSE, 0); 
-	-- }
 
 	--Add our view kick in
     self:AddViewKick()

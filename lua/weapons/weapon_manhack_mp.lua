@@ -1,11 +1,10 @@
-SWEP.PrintName			= "Manhack"
+SWEP.PrintName			= "MANHACK"
 SWEP.Author			= "Strafe"
-SWEP.Category	= "Half-Life 2 Plus"
-SWEP.Spawnable			= true
+SWEP.Spawnable			= false
 SWEP.AdminOnly			= false
 SWEP.UseHands			= true
-SWEP.Slot				= 2
-SWEP.SlotPos			= 2
+SWEP.Slot				= 5
+SWEP.SlotPos			= 1
 SWEP.DrawAmmo			= true
 SWEP.ViewModel			= "models/weapons/c_manhack.mdl"
 SWEP.ViewModelFlip = false

@@ -1,11 +1,10 @@
-SWEP.PrintName			= "Annabelle"
+SWEP.PrintName			= "ANNABELLE"
 SWEP.Author			= "Strafe"
 SWEP.Category	= "Half-Life 2"
-SWEP.Spawnable			= true
 SWEP.AdminOnly			= false
 SWEP.UseHands			= true
-SWEP.Slot				= 1
-SWEP.SlotPos			= 8
+SWEP.Slot				= 3
+SWEP.SlotPos			= 2
 SWEP.DrawAmmo			= true
 SWEP.ViewModel			= "models/weapons/c_shotgun.mdl"
 SWEP.ViewModelFlip = false

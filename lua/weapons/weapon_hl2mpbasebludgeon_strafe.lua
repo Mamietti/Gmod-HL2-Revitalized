@@ -3,16 +3,9 @@ SWEP.Author			= "Strafe"
 SWEP.Category	= "Half-Life 2 Plus"
 SWEP.Spawnable			= false
 SWEP.AdminOnly			= true
-SWEP.UseHands			= true
-SWEP.Slot				= 2
-SWEP.SlotPos			= 2
-SWEP.DrawAmmo			= true
 SWEP.ViewModel			= "models/weapons/c_stunstick.mdl"
-SWEP.ViewModelFlip = false
 SWEP.WorldModel			= "models/weapons/w_stunstick.mdl"
-SWEP.CSMuzzleFlashes	= false
 SWEP.HoldType			= "melee"
-SWEP.FiresUnderwater = true
 SWEP.Base = "weapon_hl2basehlmpcombatweapon_strafe"
 DEFINE_BASECLASS( "weapon_hl2mpbasehlmpcombatweapon_strafe" )
 
@@ -25,11 +18,6 @@ SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic	= false
 SWEP.Secondary.Ammo			= "none"
-
-SWEP.AutoSwitchTo		= false
-SWEP.AutoSwitchFrom		= false
-
-SWEP.m_bReloadsSingly = false
 
 SWEP.SINGLE = "Weapon_Crowbar.Single"
 SWEP.MELEE_HIT = "Weapon_Crowbar.Melee_Hit"

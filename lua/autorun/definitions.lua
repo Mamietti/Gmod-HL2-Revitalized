@@ -6,10 +6,29 @@ local function ADD_ITEM( name, class )
 
 end
 
+local function ADD_WEAPON( name, class )
+
+	list.Set( "Weapon", class, { ClassName = class, PrintName = name, Category = Category, Author = "VALVe", Spawnable = true } )
+	duplicator.Allow( class )
+
+end
+
 Category = "Half-Life 2"
+
 ADD_ITEM( "Flare Ammo", "item_flare_round" )
 ADD_ITEM( "Flare Ammo (Large)", "item_box_flare_rounds" )
 ADD_ITEM( "Sniper Ammo", "item_box_sniper_rounds" )
+
+ADD_WEAPON( "Annabelle", "weapon_annabelle" )
+ADD_WEAPON( "Alyx Gun", "weapon_alyxgun" )
+
+Category = "Half-Life 2 Plus"
+
+ADD_WEAPON( "Combat Knife", "weapon_knife" )
+ADD_WEAPON( "Flare Gun", "weapon_flaregun" )
+ADD_WEAPON( "Manhack", "weapon_manhack_mp" )
+ADD_WEAPON( "Sniper Rifle", "weapon_sniper" )
+
 
 if CLIENT then
 	surface.CreateFont( "HL2HUDFONT", {
