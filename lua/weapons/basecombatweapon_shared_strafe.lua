@@ -177,7 +177,7 @@ function SWEP:ItemPostFrame()
 		--no fire buttons down or reloading
 		if !self:ReloadOrSwitchWeapons() and self:GetInReload() == false then
             --HACKHACK: make it care about firing
-            --if CurTime() < self:GetNextPrimaryFire() then return end
+            if CurTime() < self:GetNextPrimaryFire() then return end
 			self:WeaponIdle()
         end
     end

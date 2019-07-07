@@ -37,8 +37,16 @@ SWEP.RELOAD = "Weapon_Pistol.Reload"
 
 DEFINE_BASECLASS( "weapon_hl2mpbase_selectfiremachinegun_strafe" )
 
+function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
+	surface.SetDrawColor( Color(255, 255, 0, 255) )
+    surface.SetMaterial( Material("hud/alyxgun_icon.vmt") )
+    texwide = wide*0.75*0.7
+    textall = tall/2*0.7
+    surface.DrawTexturedRect( x+(wide-texwide)/2, y+(tall-textall)/2, texwide, textall)
+end
+
 function SWEP:GetDamage()
-    return GetConVar("sk_plr_dmg_alyxgun"):GetInt()
+    return 5--GetConVar("sk_plr_dmg_alyxgun"):GetInt()
 end
 
 function SWEP:GetFireRate()
@@ -74,4 +82,9 @@ function SWEP:HandleFireOnEmpty()
 		end
 		self:SetFireOnEmpty(true)
 	end
+end
+
+function SWEP:DoReload()
+	self:WeaponSound( self.RELOAD )
+    BaseClass.DoReload(self)
 end

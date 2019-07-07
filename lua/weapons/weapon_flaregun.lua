@@ -1,6 +1,7 @@
 SWEP.PrintName			= "Flare Gun"
 SWEP.Author			= "Strafe"
-SWEP.Spawnable			= false
+SWEP.Category	= "Half-Life 2 Expanded"
+SWEP.Spawnable			= true
 SWEP.AdminOnly			= false
 SWEP.UseHands			= true
 SWEP.Slot				= 1
@@ -13,6 +14,7 @@ SWEP.CSMuzzleFlashes	= false
 SWEP.HoldType			= "pistol"
 SWEP.FiresUnderwater = true
 SWEP.Base = "weapon_hl2mpbasehlmpcombatweapon_strafe"
+DEFINE_BASECLASS( "weapon_hl2mpbasehlmpcombatweapon_strafe" )
 SWEP.ViewModelFOV = 55
 
 SWEP.Primary.ClipSize		= 1
@@ -35,7 +37,37 @@ SWEP.EMPTY = "Weapon_Pistol.Empty"
 SWEP.DEPLOY = ""
 SWEP.RELOAD = ""
 
+function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
+    local letter = "sd"
+	surface.SetDrawColor( color_transparent )
+	surface.SetTextColor( 255, 220, 0, alpha )
+	surface.SetFont( "WeaponIconsLarge" )
+	local w, h = surface.GetTextSize(letter)
+	surface.SetTextPos( x + ( wide - w ) / 2,
+						y + ( tall - h ) / 2 )
+                        
+	surface.DrawText( letter )
+    surface.SetFont( "WeaponIconsSelectedLarge" )
+    	surface.SetTextPos( x + ( wide / 2 ) - ( w / 2 ),
+						y + ( tall / 2 ) - ( h / 2 ) )
+    surface.DrawText( letter )
+end
+
+function SWEP:DoDrawCrosshair( x, y )
+    height = ScrH()*0.02
+	surface.SetDrawColor( Color(255, 150, 0, 255) )
+    surface.SetMaterial( Material("sprites/crosshairs.vmt") )
+    surface.DrawTexturedRectUV( x - height * 0.5, y - height * 0.5, height, height, 72/128, 48/128, 95/128, 71/128)
+	return true
+end
+
+function SWEP:SetupDataTables()
+    BaseClass.SetupDataTables(self)
+    self:NetworkVar( "Bool" , 5 , "NeedHolster" )
+end
+
 function SWEP:DoPrimaryAttack()
+    if self:GetNeedHolster() then return end
 	if self.Owner then
 		if self:Clip1()<=0 then
 			self:SendWeaponAnimIdeal(ACT_VM_DRYFIRE)
@@ -56,25 +88,25 @@ function SWEP:DoPrimaryAttack()
 			CFlare:SetVelocity(self.Owner:EyeAngles():Forward()*1500)
 		end
 		self:WeaponSound(self.SINGLE)
-		
 	end
 end
 
-function SWEP:DrawWorldModel()
-	if not self.Owner:IsValid() then
-		self:DrawModel()
-	else
-		local hand, offset, rotate
-		hand = self.Owner:GetAttachment(self.Owner:LookupAttachment("anim_attachment_rh"))
-		offset = hand.Ang:Right() * 1 + hand.Ang:Forward() * 4.5 + hand.Ang:Up() * 3
+function SWEP:ItemPreFrame()
+    if self:GetNeedHolster() then
+        self:SendWeaponAnimIdeal(ACT_VM_DRAW)
+        self:WeaponSound("Weapon_Shotgun.Reload")
+        self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
+        self:SetNextSecondaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
+        self:SetNeedHolster(false)
+    end
+    BaseClass.ItemPreFrame()
+end
 
-		hand.Ang:RotateAroundAxis(hand.Ang:Right(), 0)
-		hand.Ang:RotateAroundAxis(hand.Ang:Forward(), 90)
-		hand.Ang:RotateAroundAxis(hand.Ang:Up(), -90)
+function SWEP:FinishReload()
+    self:SetNeedHolster(true)
+	BaseClass.FinishReload(self)
+end
 
-		self:SetRenderOrigin(hand.Pos + offset)
-		self:SetRenderAngles(hand.Ang)
-
-		self:DrawModel()
-	end
+function SWEP:DoReload()
+    return self:DefaultReloadAlt(ACT_VM_HOLSTER)
 end

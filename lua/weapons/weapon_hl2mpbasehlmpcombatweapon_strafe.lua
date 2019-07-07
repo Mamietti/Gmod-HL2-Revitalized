@@ -102,7 +102,7 @@ end
 
 function SWEP:WeaponIdle()
 	if self:WeaponShouldBeLowered() then
-		if !table.HasValue({ACT_VM_IDLE_LOWERED,ACT_VM_IDLE_TO_LOWERED,ACT_TRANSITION},self:GetActivity()) then
+		if !table.HasValue({ACT_VM_IDLE_LOWERED,ACT_VM_IDLE_TO_LOWERED,ACT_TRANSITION},self:GetActivity()) and self:GetActivity() != self:GetPrimaryAttackActivity() then --HACK: it somehow does not detect the fire anim.
 			self:SendWeaponAnimIdeal(ACT_VM_IDLE_LOWERED)
 		elseif self:HasWeaponIdleTimeElapsed() then
 			self:SendWeaponAnimIdeal(ACT_VM_IDLE_LOWERED)

@@ -1,9 +1,0 @@
-"VertexLitGeneric"
-{
-	// Original shader: VertexLitTexture
-	"$basetexture" "models/Weapons/V_flaregun/main_side"
-	"$phong" "1"
-	"$phongexponent" "25"
-	"$phongboost"	"2"
-	"$phongfresnelranges"	"[ 0.2 0.5 1.5 ]"
-}

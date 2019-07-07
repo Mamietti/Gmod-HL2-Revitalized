@@ -72,7 +72,7 @@ function SWEP:DoPrimaryAttack()
             self:RemoveAmmo(1, self.Primary.AmmoType)
         end
         
-        self:FireBullets(info)
+        self.Owner:FireBullets(info)
         self:AddViewKick()
     end
 end
@@ -102,8 +102,6 @@ function SWEP:DoMachineGunKick( maxVerticleKickAngle, fireDurationTime, slideLim
 	if math.random(0,1)==0 then
 		vecScratch.z = vecScratch.z * -1
 	end
-
-	--UTIL_ClipPunchAngleOffset( vecScratch, pPlayer->m_Local.m_vecPunchAngle, QAngle( 24.0f, 3.0f, 1.0f ) );
 
 	self.Owner:ViewPunch( vecScratch * 0.5 )
 end

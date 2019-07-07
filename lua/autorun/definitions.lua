@@ -31,42 +31,30 @@ ADD_WEAPON( "Sniper Rifle", "weapon_sniper" )
 
 
 if CLIENT then
-	surface.CreateFont( "HL2HUDFONT", {
+	surface.CreateFont( "WeaponIconsLarge", {
 		font = "HalfLife2",
 		size = 120,
-		weight = 500,
-		blursize = 0,
-		scanlines = 16,
-		antialias = true,
-		underline = false,
-		italic = false,
-		strikeout = true,
-		symbol = false,
-		rotary = false,
-		shadow = true,
+		weight = 0,
 		additive = true,
-		outline = false,
+        antialias = true,
+        custom = true
 	} )
-	surface.CreateFont( "CSKillIcons", {
-		font = "csd",
+    surface.CreateFont( "WeaponIconsSelectedLarge", {
+		font = "HalfLife2",
 		size = 120,
-		weight = 500,
+		weight = 0,
 		blursize = 0,
-		scanlines = 16,
-		antialias = true,
-		underline = false,
-		italic = false,
-		strikeout = true,
-		symbol = false,
-		rotary = false,
-		shadow = false,
 		additive = true,
-		outline = true,
+        blursize = 15,
+        scanlines = 7
 	} )
-    language.Add( "GaussEnergy_ammo", "Depleted Uranium-235" )
+    
     language.Add( "SniperRound_ammo", "Sniper Ammo" )
     language.Add( "Manhack_ammo", "Manhacks" )
     language.Add( "FlareRound_ammo", "Flares" )
+    
+    killicon.Add( "weapon_alyxgun_player", "HUD/alyxgun_icon", Color( 255, 80, 0, 255 ) )
+    killicon.AddFont( "weapon_annabelle_player", "HL2MPTypeDeath", "0", Color( 255, 80, 0, 255 ) )
 end
 
 game.AddAmmoType( {
@@ -122,4 +110,7 @@ hook.Add( "PlayerCanPickupWeapon", "SwitchPlayerWeapon", function( ply, wep )
 		return false
 	end
 end )
+
+CreateClientConVar( "hl2base_running_enabled", "0", true, false )
+CreateClientConVar( "hl2base_examining_enabled", "0", true, false )
 

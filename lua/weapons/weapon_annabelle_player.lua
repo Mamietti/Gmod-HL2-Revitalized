@@ -6,7 +6,7 @@ SWEP.UseHands			= true
 SWEP.Slot				= 3
 SWEP.SlotPos			= 2
 SWEP.DrawAmmo			= true
-SWEP.ViewModel			= "models/weapons/c_shotgun.mdl"
+SWEP.ViewModel			= "models/weapons/c_annabelle.mdl"
 SWEP.ViewModelFlip = false
 SWEP.WorldModel			= "models/weapons/w_annabelle.mdl"
 SWEP.CSMuzzleFlashes	= false
@@ -34,6 +34,22 @@ SWEP.EMPTY = "Weapon_Shotgun.Empty"
 SWEP.RELOAD = "Weapon_Shotgun.Reload"
 SWEP.SPECIAL1 = "Weapon_Shotgun.Special1"
 SWEP.m_bReloadsSingly = true
+
+function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
+    local letter = "qb"
+	surface.SetDrawColor( color_transparent )
+	surface.SetTextColor( 255, 220, 0, alpha )
+	surface.SetFont( "WeaponIconsLarge" )
+	local w, h = surface.GetTextSize(letter)
+	surface.SetTextPos( x + ( wide - w ) / 2,
+						y + ( tall - h ) / 2 )
+                        
+	surface.DrawText( letter )
+    surface.SetFont( "WeaponIconsSelectedLarge" )
+    	surface.SetTextPos( x + ( wide / 2 ) - ( w / 2 ),
+						y + ( tall / 2 ) - ( h / 2 ) )
+    surface.DrawText( letter )
+end
 
 function SWEP:Initialize()
     BaseClass.Initialize(self)

@@ -84,7 +84,7 @@ function SWEP:Hit(traceHit, nHitActivity, bIsSecondary )
 		info:SetDamageType(DMG_CLUB)
 
 		self:CalculateMeleeDamageForce( info, hitDirection, traceHit.HitPos );
-		traceHit.HitGroup = HITGROUP_CHEST --HACK AS F**K
+		traceHit.HitGroup = HITGROUP_CHEST --HACKHACK equalize damage for Half-Life-ness
 		pHitEntity:DispatchTraceAttack( info, traceHit, hitDirection )
 	end
 	self:EmitSound( self.MELEE_HIT )
@@ -101,10 +101,8 @@ function SWEP:CalculateMeleeDamageForce(info, vecMeleeDir, vecForceOrigin)
 	vecForce = vecMeleeDir
 	vecForce:Normalize()
 	vecForce = vecForce * flForceScale
-	--ConVar phys_pushscale( "phys_pushscale", "1", FCVAR_REPLICATED );
-	--vecForce *= phys_pushscale
-	--flscale = 1
-	--vecForce *= flScale
+    phys_pushscale = GetConVar("phys_pushscale"):GetFloat()
+	vecForce = vecForce * phys_pushscale
 	info:SetDamageForce( vecForce )
 end
 

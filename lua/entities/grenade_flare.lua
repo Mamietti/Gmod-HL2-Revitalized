@@ -26,7 +26,6 @@ function ENT:Initialize()
 		self:SetMoveType(MOVETYPE_FLYGRAVITY)
 		self:SetSaveValue("m_bSmoke", true)
 		self:SetMoveCollide(MOVECOLLIDE_FLY_BOUNCE)
-		self:SetFriction( 0.6 )
 		self:SetGravity( 1 )
 	end
 	self.Sound = CreateSound(self,"Weapon_FlareGun.Burn")
@@ -44,7 +43,6 @@ function ENT:Initialize()
 		flare:SetParent(self)
 		flare:SetOwner(self)
 		flare:Spawn()
-		--PrintTable(flare:GetSaveTable())
 	end
 end
 
@@ -126,7 +124,7 @@ function ENT:Touch(ent)
 			vecNewVelocity.x = vecNewVelocity.x * 0.8
 			vecNewVelocity.y = vecNewVelocity.x * 0.8
 			self:SetAbsVelocity(vecNewVelocity)
-			if self:GetAbsVelocity():Length()<64 or self.m_nBounces == 3 then
+			if self:GetAbsVelocity():Length()<64 or self.m_nBounces == 2 then
 				self:SetAbsVelocity(Vector(0,0,0))
 				self:SetMoveType( MOVETYPE_NONE )
 				self:RemoveSolidFlags( FSOLID_NOT_SOLID )
