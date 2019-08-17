@@ -111,9 +111,9 @@ function SWEP:WeaponIdle()
         if CurTime() > self:GetRaiseTime() and self:GetActivity() == ACT_VM_IDLE_LOWERED then
             self:SendWeaponAnimIdeal(ACT_VM_IDLE)
         elseif self:HasWeaponIdleTimeElapsed() then
-			self:SendWeaponAnimIdeal(ACT_VM_IDLE)
-		end
-	end
+            self:SendWeaponAnimIdeal(ACT_VM_IDLE)
+        end
+    end
 end
 
 function SWEP:Ready()

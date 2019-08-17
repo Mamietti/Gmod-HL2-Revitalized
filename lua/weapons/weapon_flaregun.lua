@@ -1,15 +1,15 @@
 SWEP.PrintName			= "Flare Gun"
 SWEP.Author			= "Strafe"
-SWEP.Category	= "Half-Life 2 Expanded"
 SWEP.Spawnable			= true
+SWEP.Category           = "Half-Life 2 Extended"
 SWEP.AdminOnly			= false
 SWEP.UseHands			= true
 SWEP.Slot				= 1
 SWEP.SlotPos			= 3
 SWEP.DrawAmmo			= true
-SWEP.ViewModel			= "models/weapons/c_flaregun.mdl"
+SWEP.ViewModel			= "models/weapons/c_pistol.mdl"
 SWEP.ViewModelFlip = false
-SWEP.WorldModel			= "models/weapons/w_flaregun.mdl"
+SWEP.WorldModel			= "models/weapons/w_pistol.mdl"
 SWEP.CSMuzzleFlashes	= false
 SWEP.HoldType			= "pistol"
 SWEP.FiresUnderwater = true
@@ -54,7 +54,7 @@ function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
 end
 
 function SWEP:DoDrawCrosshair( x, y )
-    height = ScrH()*0.02
+    height = ScrH()*0.016
 	surface.SetDrawColor( Color(255, 150, 0, 255) )
     surface.SetMaterial( Material("sprites/crosshairs.vmt") )
     surface.DrawTexturedRectUV( x - height * 0.5, y - height * 0.5, height, height, 72/128, 48/128, 95/128, 71/128)

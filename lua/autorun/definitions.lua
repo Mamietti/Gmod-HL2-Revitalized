@@ -22,13 +22,6 @@ ADD_ITEM( "Sniper Ammo", "item_box_sniper_rounds" )
 ADD_WEAPON( "Annabelle", "weapon_annabelle" )
 ADD_WEAPON( "Alyx Gun", "weapon_alyxgun" )
 
-Category = "Half-Life 2 Plus"
-
-ADD_WEAPON( "Combat Knife", "weapon_knife" )
-ADD_WEAPON( "Flare Gun", "weapon_flaregun" )
-ADD_WEAPON( "Manhack", "weapon_manhack_mp" )
-ADD_WEAPON( "Sniper Rifle", "weapon_sniper" )
-
 
 if CLIENT then
 	surface.CreateFont( "WeaponIconsLarge", {
@@ -65,7 +58,8 @@ game.AddAmmoType( {
 	npcdmg = 0,
 	force = 2000,
 	minsplash = 10,
-	maxsplash = 5
+	maxsplash = 5,
+    maxcarry = 5
 } )
 game.AddAmmoType( {
 	name = "FlareRound",
@@ -75,30 +69,12 @@ game.AddAmmoType( {
 	npcdmg = 0,
 	force = 2000,
 	minsplash = 10,
-	maxsplash = 5
+	maxsplash = 5,
+    maxcarry = 20
 } )
 
-
----SOUNDS
-
-sound.Add( {
-	name = "Weapon_Pknife.Swing",
-	channel = CHAN_WEAPON,
-	volume = 0.7,
-	level = 80,
-	pitch = { 95, 110 },
-	sound = "weapons/pknife/pulseknife_kara.wav"
-} )
-sound.Add( {
-	name = "Weapon_Pknife.Melee_Hit",
-	channel = CHAN_WEAPON,
-	volume = 0.7,
-	level = 80,
-	pitch = { 95, 110 },
-	sound = "weapons/pknife/pulseknife_hit.wav"
-} )
-
-hook.Add( "PlayerCanPickupWeapon", "SwitchPlayerWeapon", function( ply, wep )
+hook.Add( "PlayerCanPickupWeapon", "HL2WeaponsStrafeReplaceWeapons", function( ply, wep )
+    if GetConVar( "hl2weapons_strafe_replace_weapons" ):GetInt()!=1 then return true end
 	if wep:GetClass() == "weapon_annabelle" then
 		ply:Give( "weapon_annabelle_player" )
 		wep:Remove()
@@ -111,6 +87,6 @@ hook.Add( "PlayerCanPickupWeapon", "SwitchPlayerWeapon", function( ply, wep )
 	end
 end )
 
-CreateClientConVar( "hl2base_running_enabled", "0", true, false )
-CreateClientConVar( "hl2base_examining_enabled", "0", true, false )
-
+convar = CreateConVar( "hl2weapons_strafe_replace_weapons", 0, "Defines whether Annabelle and Alyx Gun are replaced with hexed versions" )
+--convar = CreateConVar( "hl2weapons_strafe_runanim_enabled", 0, "Defines whether weapons can use running animations" )
+--convar = CreateConVar( "hl2weapons_strafe_walkanim_enabled", 0, "Defines whether weapons can use walking animations" )

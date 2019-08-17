@@ -87,7 +87,7 @@ function SWEP:Hit(traceHit, nHitActivity, bIsSecondary )
 		traceHit.HitGroup = HITGROUP_CHEST --HACKHACK equalize damage for Half-Life-ness
 		pHitEntity:DispatchTraceAttack( info, traceHit, hitDirection )
 	end
-	self:EmitSound( self.MELEE_HIT )
+	self:WeaponSound( self.MELEE_HIT )
 	self:ImpactEffect(traceHit)
 end
 
@@ -233,7 +233,7 @@ function SWEP:Swing(IsSecondary)
 	end
 	--	Miss
 	if traceHit.Fraction == 1.0 then
-		self:EmitSound( self.SINGLE )
+		self:WeaponSound( self.SINGLE )
 		if bIsSecondary then
 			nHitActivity = ACT_VM_MISSCENTER2
 		else

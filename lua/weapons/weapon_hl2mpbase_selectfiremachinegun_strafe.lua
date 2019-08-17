@@ -82,10 +82,10 @@ end
 function SWEP:DoSecondaryAttack()
 	if self:GetFireMode()==0 then
 		self:SetFireMode(1)
-		self:EmitSound(self.SPECIAL2)
+		self:WeaponSound(self.SPECIAL2)
 	else
 		self:SetFireMode(0)
-		self:EmitSound(self.SPECIAL1)
+		self:WeaponSound(self.SPECIAL1)
 	end
 	
 	self:SendWeaponAnimIdeal( self:GetSecondaryAttackActivity() )

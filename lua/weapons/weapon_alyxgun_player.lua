@@ -12,8 +12,8 @@ SWEP.WorldModel			= "models/weapons/w_alyx_gun.mdl"
 SWEP.CSMuzzleFlashes	= false
 SWEP.HoldType			= "pistol"
 SWEP.FiresUnderwater = true
-SWEP.Base = "weapon_hl2mpbase_selectfiremachinegun_strafe"
-SWEP.ViewModelFOV = 45
+SWEP.Base = "weapon_hl2mpbase_machinegun_strafe"
+--SWEP.ViewModelFOV = 45
 
 SWEP.Primary.ClipSize		= 30
 SWEP.Primary.DefaultClip	= 30
@@ -35,7 +35,7 @@ SWEP.EMPTY = "Weapon_Pistol.Empty"
 SWEP.DEPLOY = ""
 SWEP.RELOAD = "Weapon_Pistol.Reload"
 
-DEFINE_BASECLASS( "weapon_hl2mpbase_selectfiremachinegun_strafe" )
+DEFINE_BASECLASS( "weapon_hl2mpbase_machinegun_strafe" )
 
 function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
 	surface.SetDrawColor( Color(255, 255, 0, 255) )
@@ -46,15 +46,11 @@ function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
 end
 
 function SWEP:GetDamage()
-    return 5--GetConVar("sk_plr_dmg_alyxgun"):GetInt()
+    return GetConVar("sk_plr_dmg_alyxgun"):GetInt()
 end
 
 function SWEP:GetFireRate()
-	if self:GetFireMode()==0 then
-		return 0.1
-	else
-		return 0.05
-	end
+    return 0.1
 end
 
 function SWEP:OnDrop()

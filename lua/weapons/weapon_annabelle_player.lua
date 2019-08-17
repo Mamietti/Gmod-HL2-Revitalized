@@ -14,7 +14,7 @@ SWEP.HoldType			= "shotgun"
 SWEP.FiresUnderwater = true
 SWEP.Base = "weapon_hl2mpbasehlmpcombatweapon_strafe"
 DEFINE_BASECLASS( "weapon_hl2mpbasehlmpcombatweapon_strafe" )
-SWEP.ViewModelFOV = 55
+--SWEP.ViewModelFOV = 55
 
 SWEP.Primary.ClipSize		= 2
 SWEP.Primary.DefaultClip	= 2
