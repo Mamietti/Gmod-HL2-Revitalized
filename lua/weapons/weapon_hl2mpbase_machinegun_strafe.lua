@@ -72,7 +72,7 @@ function SWEP:DoPrimaryAttack()
             self:RemoveAmmo(1, self.Primary.AmmoType)
         end
         
-        self.Owner:FireBullets(info)
+        self:FireBullets(info)
         self:AddViewKick()
     end
 end

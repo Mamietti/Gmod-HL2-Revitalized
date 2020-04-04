@@ -39,10 +39,10 @@ DEFINE_BASECLASS( "weapon_hl2mpbase_machinegun_strafe" )
 
 function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
 	surface.SetDrawColor( Color(255, 255, 0, 255) )
-    surface.SetMaterial( Material("hud/alyxgun_icon.vmt") )
-    texwide = wide*0.75*0.7
-    textall = tall/2*0.7
-    surface.DrawTexturedRect( x+(wide-texwide)/2, y+(tall-textall)/2, texwide, textall)
+    surface.SetMaterial( Material("sprites/w_icons1b.vmt") )
+    texwide = wide*0.75*0.8
+    textall = tall/2*0.8
+    surface.DrawTexturedRectUV( x+(wide-texwide)/2, y+(tall-textall)/2, texwide, textall, 0.5, 0.5, 1, 0.75)
 end
 
 function SWEP:GetDamage()

@@ -45,9 +45,6 @@ if CLIENT then
     language.Add( "SniperRound_ammo", "Sniper Ammo" )
     language.Add( "Manhack_ammo", "Manhacks" )
     language.Add( "FlareRound_ammo", "Flares" )
-    
-    killicon.Add( "weapon_alyxgun_player", "HUD/alyxgun_icon", Color( 255, 80, 0, 255 ) )
-    killicon.AddFont( "weapon_annabelle_player", "HL2MPTypeDeath", "0", Color( 255, 80, 0, 255 ) )
 end
 
 game.AddAmmoType( {
@@ -87,6 +84,4 @@ hook.Add( "PlayerCanPickupWeapon", "HL2WeaponsStrafeReplaceWeapons", function( p
 	end
 end )
 
-convar = CreateConVar( "hl2weapons_strafe_replace_weapons", 0, "Defines whether Annabelle and Alyx Gun are replaced with hexed versions" )
---convar = CreateConVar( "hl2weapons_strafe_runanim_enabled", 0, "Defines whether weapons can use running animations" )
---convar = CreateConVar( "hl2weapons_strafe_walkanim_enabled", 0, "Defines whether weapons can use walking animations" )
+convar = CreateConVar( "hl2weapons_strafe_replace_weapons", 1, 128, "Defines whether Annabelle and Alyx Gun are replaced with hexed versions")

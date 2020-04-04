@@ -1,4 +1,4 @@
-SWEP.PrintName			= "Flare Gun"
+SWEP.PrintName			= "FLARE GUN"
 SWEP.Author			= "Strafe"
 SWEP.Spawnable			= true
 SWEP.Category           = "Half-Life 2 Extended"
@@ -38,19 +38,11 @@ SWEP.DEPLOY = ""
 SWEP.RELOAD = ""
 
 function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
-    local letter = "sd"
-	surface.SetDrawColor( color_transparent )
-	surface.SetTextColor( 255, 220, 0, alpha )
-	surface.SetFont( "WeaponIconsLarge" )
-	local w, h = surface.GetTextSize(letter)
-	surface.SetTextPos( x + ( wide - w ) / 2,
-						y + ( tall - h ) / 2 )
-                        
-	surface.DrawText( letter )
-    surface.SetFont( "WeaponIconsSelectedLarge" )
-    	surface.SetTextPos( x + ( wide / 2 ) - ( w / 2 ),
-						y + ( tall / 2 ) - ( h / 2 ) )
-    surface.DrawText( letter )
+	surface.SetDrawColor( Color(255, 255, 0, 255) )
+    surface.SetMaterial( Material("sprites/w_icons1b.vmt") )
+    texwide = wide*0.75*0.8
+    textall = tall/2*0.8
+    surface.DrawTexturedRectUV( x+(wide-texwide)/2, y+(tall-textall)/2, texwide, textall, 0.5, 0.25, 1, 0.5)
 end
 
 function SWEP:DoDrawCrosshair( x, y )

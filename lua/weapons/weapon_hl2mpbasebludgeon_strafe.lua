@@ -161,7 +161,6 @@ function SWEP:ImpactWater(start, endpos)
 		if bit.band( util.PointContents( start ), CONTENTS_SLIME ) == CONTENTS_SLIME then
 			data:SetFlags(FX_WATER_IN_SLIME)
 		end
-		print("WATER")
 		util.Effect( "watersplash", data )	
 	end
 

@@ -29,9 +29,25 @@ SWEP.AutoSwitchTo		= false
 SWEP.AutoSwitchFrom		= false
 
 SWEP.SINGLE = "Weapon_Crowbar.Single"
-SWEP.MELEE_HIT = "Weapon_Crowbar.Melee_Hit"--"Weapon_Pknife.Melee_Hit"
+SWEP.MELEE_HIT = "Weapon_Crowbar.Melee_Hit"
 
 SWEP.BLUDGEON_HULL_DIM = 16
+
+function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
+    local letter = "n"
+	surface.SetDrawColor( color_transparent )
+	surface.SetTextColor( 255, 220, 0, alpha )
+	surface.SetFont( "WeaponIconsLarge" )
+	local w, h = surface.GetTextSize(letter)
+	surface.SetTextPos( x + ( wide - w ) / 2,
+						y + ( tall - h ) / 2 )
+                        
+	surface.DrawText( letter )
+    surface.SetFont( "WeaponIconsSelectedLarge" )
+    	surface.SetTextPos( x + ( wide / 2 ) - ( w / 2 ),
+						y + ( tall / 2 ) - ( h / 2 ) )
+    surface.DrawText( letter )
+end
 
 function SWEP:SecondaryAttack()
 	return false
