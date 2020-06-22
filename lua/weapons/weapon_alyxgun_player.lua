@@ -6,7 +6,7 @@ SWEP.UseHands			= true
 SWEP.Slot				= 1
 SWEP.SlotPos			= 2
 SWEP.DrawAmmo			= true
-SWEP.ViewModel			= "models/weapons/c_alyx_gun.mdl"
+SWEP.ViewModel			= "models/weapons/c_pistol.mdl"
 SWEP.ViewModelFlip = false
 SWEP.WorldModel			= "models/weapons/w_alyx_gun.mdl"
 SWEP.CSMuzzleFlashes	= false
@@ -30,7 +30,11 @@ SWEP.AutoSwitchFrom		= false
 
 SWEP.m_bReloadsSingly = false
 
-SWEP.SINGLE = "Weapon_Alyx_Gun.Single"
+if ( !IsMounted( "ep2" ) ) then
+    SWEP.SINGLE = "Weapon_Pistol.NPC_Single"
+else
+    SWEP.SINGLE = "Weapon_AlyxGun.Single"
+end
 SWEP.EMPTY = "Weapon_Pistol.Empty"
 SWEP.DEPLOY = ""
 SWEP.RELOAD = "Weapon_Pistol.Reload"
@@ -81,6 +85,6 @@ function SWEP:HandleFireOnEmpty()
 end
 
 function SWEP:DoReload()
-	self:WeaponSound( self.RELOAD )
+    --self:WeaponSound( self.RELOAD )
     BaseClass.DoReload(self)
 end
