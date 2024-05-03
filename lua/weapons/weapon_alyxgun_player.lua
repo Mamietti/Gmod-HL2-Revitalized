@@ -6,7 +6,7 @@ SWEP.UseHands			= true
 SWEP.Slot				= 1
 SWEP.SlotPos			= 2
 SWEP.DrawAmmo			= true
-SWEP.ViewModel			= "models/weapons/c_pistol.mdl"
+SWEP.ViewModel			= "models/weapons/c_alyx_gun.mdl"
 SWEP.ViewModelFlip = false
 SWEP.WorldModel			= "models/weapons/w_alyx_gun.mdl"
 SWEP.CSMuzzleFlashes	= false
@@ -85,6 +85,6 @@ function SWEP:HandleFireOnEmpty()
 end
 
 function SWEP:DoReload()
-    --self:WeaponSound( self.RELOAD )
+	--self:WeaponSound( self.RELOAD )
     BaseClass.DoReload(self)
 end
