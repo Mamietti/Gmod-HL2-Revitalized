@@ -1,32 +1,17 @@
-SWEP.PrintName			= "Test SMG BURST"
 SWEP.Author			= "Strafe"
-SWEP.Category	= "Half-Life 2 Plus"
 SWEP.Spawnable			= false
 SWEP.AdminOnly			= true
-SWEP.ViewModel			= "models/weapons/c_smg1.mdl"
-SWEP.WorldModel			= "models/weapons/w_smg1.mdl"
-SWEP.HoldType			= "smg"
+
 SWEP.Base = "weapon_hl2mpbase_machinegun_strafe"
-
-SWEP.Primary.ClipSize		= 30
-SWEP.Primary.DefaultClip	= 90
-SWEP.Primary.Automatic		= true
-SWEP.Primary.Ammo			= "SMG1"
-
-SWEP.Secondary.ClipSize		= -1
-SWEP.Secondary.DefaultClip	= -1
-SWEP.Secondary.Automatic	= false
-SWEP.Secondary.Ammo			= "none"
-
-SWEP.SINGLE = "Weapon_SMG1.Single"
-SWEP.EMPTY = "Weapon_Pistol.Empty"
-SWEP.DEPLOY = ""
-SWEP.RELOAD = "Weapon_SMG1.Reload"
-SWEP.SPECIAL1 = "Weapon_SMG1.Special1"
-SWEP.SPECIAL2 = "Weapon_SMG1.Special2"
-SWEP.BURST = "Weapon_Pistol.Burst"
-
 DEFINE_BASECLASS( "weapon_hl2mpbase_machinegun_strafe" )
+
+SWEP.Primary.FireRate = 0.075
+
+SWEP.Primary.BurstCycleRate = 0.5
+SWEP.Primary.BurstCount = 3
+SWEP.Primary.BurstFireRate = 0.05
+
+SWEP.BURST = ""
 
 function SWEP:Initialize()
     BaseClass.Initialize( self )
@@ -44,14 +29,14 @@ function SWEP:SetupDataTables()
 end
 
 function SWEP:GetBurstCycleRate()
-	return 0.5
+	return self.Primary.BurstCycleRate
 end
 
 function SWEP:GetFireRate()
 	if self:GetFireMode()==0 then
-		return 0.075
+		return self.Primary.FireRate
 	else
-		return 0.05
+		return self.Primary.BurstFireRate
 	end
 end
 
@@ -145,7 +130,7 @@ function SWEP:Think()
 end
 
 function SWEP:GetBurstCount()
-	return 3
+	return self.Primary.BurstCount
 end
 
 function SWEP:GetSecondaryAttackActivity()

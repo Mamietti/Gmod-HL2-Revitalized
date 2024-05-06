@@ -1,20 +1,23 @@
 SWEP.PrintName			= "ANNABELLE"
 SWEP.Author			= "Strafe"
-SWEP.Category	= "Half-Life 2"
 SWEP.AdminOnly			= false
-SWEP.UseHands			= true
+SWEP.Base = "weapon_hl2mpbasehlmpcombatweapon_strafe"
+DEFINE_BASECLASS( "weapon_hl2mpbasehlmpcombatweapon_strafe" )
+
 SWEP.Slot				= 3
 SWEP.SlotPos			= 2
 SWEP.DrawAmmo			= true
+SWEP.AutoSwitchTo		= false
+SWEP.AutoSwitchFrom		= false
+
 SWEP.ViewModel			= "models/weapons/c_annabelle.mdl"
 SWEP.ViewModelFlip = false
 SWEP.WorldModel			= "models/weapons/w_annabelle.mdl"
-SWEP.CSMuzzleFlashes	= false
-SWEP.HoldType			= "shotgun"
+
+SWEP.Category	= "Half-Life 2"
 SWEP.FiresUnderwater = true
-SWEP.Base = "weapon_hl2mpbasehlmpcombatweapon_strafe"
-DEFINE_BASECLASS( "weapon_hl2mpbasehlmpcombatweapon_strafe" )
---SWEP.ViewModelFOV = 55
+
+SWEP.HoldType			= "shotgun"
 
 SWEP.Primary.ClipSize		= 2
 SWEP.Primary.DefaultClip	= 2
@@ -25,9 +28,6 @@ SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic	= false
 SWEP.Secondary.Ammo			= "none"
-
-SWEP.AutoSwitchTo		= false
-SWEP.AutoSwitchFrom		= false
 
 SWEP.SINGLE = "Weapon_Shotgun.Single"
 SWEP.EMPTY = "Weapon_Shotgun.Empty"

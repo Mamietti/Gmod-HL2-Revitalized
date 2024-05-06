@@ -1,23 +1,15 @@
-SWEP.PrintName			= "Test SMG"
 SWEP.Author			= "Strafe"
 SWEP.Spawnable			= false
 SWEP.AdminOnly			= true
+SWEP.Base = "weapon_hl2mpbasehlmpcombatweapon_strafe"
+DEFINE_BASECLASS( "weapon_hl2mpbasehlmpcombatweapon_strafe" )
+
 SWEP.ViewModel			= "models/weapons/c_smg1.mdl"
 SWEP.WorldModel			= "models/weapons/w_smg1.mdl"
+
 SWEP.HoldType			= "smg"
-SWEP.Base = "weapon_hl2mpbasehlmpcombatweapon_strafe"
 
-SWEP.Primary.ClipSize		= 6
-SWEP.Primary.DefaultClip	= 6
-SWEP.Primary.Automatic		= true
-SWEP.Primary.Ammo			= "357"
-
-SWEP.Secondary.ClipSize		= -1
-SWEP.Secondary.DefaultClip	= -1
-SWEP.Secondary.Automatic	= true
-SWEP.Secondary.Ammo			= "none"
-
-DEFINE_BASECLASS( "weapon_hl2mpbasehlmpcombatweapon_strafe" )
+SWEP.Primary.BulletSpread = VECTOR_CONE_3DEGREES
 
 SWEP.SINGLE = "Weapon_357.Single"
 SWEP.EMPTY = "Weapon_Pistol.Empty"
@@ -34,10 +26,6 @@ end
 function SWEP:SetupDataTables()
     BaseClass.SetupDataTables( self )
     self:NetworkVar( "Int" , 0 , "ShotsFired" )
-end
-
-function SWEP:GetBulletSpread()
-    return VECTOR_CONE_3DEGREES
 end
 
 function SWEP:DoPrimaryAttack()

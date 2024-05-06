@@ -1,21 +1,25 @@
 SWEP.PrintName			= "MANHACK"
 SWEP.Author			= "Strafe"
 SWEP.Spawnable			= true
-SWEP.Category           = "Half-Life 2 Extended"
 SWEP.AdminOnly			= false
-SWEP.UseHands			= true
+SWEP.Base               = "weapon_hl2mpbasehlmpcombatweapon_strafe"
+DEFINE_BASECLASS( "weapon_hl2mpbasehlmpcombatweapon_strafe" )
+
 SWEP.Slot				= 5
 SWEP.SlotPos			= 1
 SWEP.DrawAmmo			= true
+SWEP.AutoSwitchTo		= false
+SWEP.AutoSwitchFrom		= false
+
 SWEP.ViewModel			= "models/weapons/c_manhack.mdl"
+SWEP.ViewModelFOV = 74
 SWEP.ViewModelFlip = false
 SWEP.WorldModel			= "models/weapons/w_manhack.mdl"
-SWEP.CSMuzzleFlashes	= false
-SWEP.HoldType			= "slam"
+
+SWEP.Category           = "Half-Life 2 Extended"
 SWEP.FiresUnderwater = false
-SWEP.Base               = "weapon_hl2mpbasehlmpcombatweapon_strafe"
-DEFINE_BASECLASS( "weapon_hl2mpbasehlmpcombatweapon_strafe" )
-SWEP.ViewModelFOV = 74
+
+SWEP.HoldType			= "slam"
 
 SWEP.Primary.ClipSize		= -1
 SWEP.Primary.DefaultClip	= 1
@@ -26,8 +30,6 @@ SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic	= false
 SWEP.Secondary.Ammo			= "none"
-SWEP.AutoSwitchTo		= false
-SWEP.AutoSwitchFrom		= false
 
 SWEP.NextDeploy = nil
 

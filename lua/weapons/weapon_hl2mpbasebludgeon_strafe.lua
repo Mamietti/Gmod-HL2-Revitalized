@@ -1,14 +1,17 @@
-SWEP.PrintName			= "Test club"
 SWEP.Author			= "Strafe"
-SWEP.Category	= "Half-Life 2 Plus"
 SWEP.Spawnable			= false
 SWEP.AdminOnly			= true
-SWEP.ViewModel			= "models/weapons/c_stunstick.mdl"
-SWEP.WorldModel			= "models/weapons/w_stunstick.mdl"
-SWEP.HoldType			= "melee"
 SWEP.Base = "weapon_hl2basehlmpcombatweapon_strafe"
 DEFINE_BASECLASS( "weapon_hl2mpbasehlmpcombatweapon_strafe" )
 
+SWEP.ViewModel			= "models/weapons/c_stunstick.mdl"
+SWEP.WorldModel			= "models/weapons/w_stunstick.mdl"
+
+SWEP.HoldType			= "melee"
+
+SWEP.Primary.Damage = 25
+SWEP.Primary.FireRate = 0.4
+SWEP.Primary.Range = 64
 SWEP.Primary.ClipSize		= -1
 SWEP.Primary.DefaultClip	= -1
 SWEP.Primary.Automatic		= true
@@ -92,7 +95,7 @@ function SWEP:Hit(traceHit, nHitActivity, bIsSecondary )
 end
 
 function SWEP:GetDamageForActivity()
-	return 25
+	return self.Primary.Damage
 end
 
 function SWEP:CalculateMeleeDamageForce(info, vecMeleeDir, vecForceOrigin)
@@ -191,7 +194,7 @@ function SWEP:ImpactTrace(traceHit,dmgtype)
 end
 
 function SWEP:GetRange()
-	return 64
+	return self.Primary.Range
 end
 
 function SWEP:Swing(IsSecondary)

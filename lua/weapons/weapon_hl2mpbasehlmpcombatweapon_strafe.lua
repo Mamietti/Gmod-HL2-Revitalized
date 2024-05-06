@@ -1,30 +1,11 @@
-SWEP.PrintName			= "Test SMG COMBAWE"
 SWEP.Author			= "Strafe"
 SWEP.Spawnable			= false
 SWEP.AdminOnly			= true
-SWEP.ViewModel			= "models/weapons/c_357.mdl"
-SWEP.WorldModel			= "models/weapons/w_357.mdl"
-SWEP.HoldType			= "smg"
+
+SWEP.UseHands = true
+
 SWEP.Base = "basecombatweapon_shared_strafe"
-
-SWEP.Primary.ClipSize		= 6
-SWEP.Primary.DefaultClip	= 6
-SWEP.Primary.Automatic		= true
-SWEP.Primary.Ammo			= "357"
-
-SWEP.Secondary.ClipSize		= -1
-SWEP.Secondary.DefaultClip	= -1
-SWEP.Secondary.Automatic	= true
-SWEP.Secondary.Ammo			= "none"
-
 DEFINE_BASECLASS( "basecombatweapon_shared_strafe" )
-
-SWEP.SINGLE = "Weapon_357.Single"
-SWEP.EMPTY = "Weapon_Pistol.Empty"
-SWEP.DEPLOY = ""
-SWEP.RELOAD = "Weapon_SMG1.Reload"
-SWEP.SPECIAL1 = ""
-SWEP.SPECIAL2 = ""
 
 function SWEP:SetupDataTables()
     BaseClass.SetupDataTables( self )

@@ -1,13 +1,22 @@
-SWEP.PrintName			= "Test SMG NEW BASE"
 SWEP.Author			= "Strafe"
 SWEP.Spawnable			= false
 SWEP.AdminOnly			= true
+SWEP.DrawWeaponInfoBox = false
+SWEP.Base = "weapon_base"
+DEFINE_BASECLASS( "weapon_base" )
+
 SWEP.ViewModel			= "models/weapons/c_smg1.mdl"
 SWEP.WorldModel			= "models/weapons/w_smg1.mdl"
-SWEP.HoldType			= "pistol"
-SWEP.Base = "weapon_base"
-SWEP.DrawWeaponInfoBox = false
+SWEP.ViewModelFOV = 54
 
+SWEP.AutoSwitchTo		= false
+SWEP.AutoSwitchFrom		= false
+
+SWEP.HoldType			= "pistol"
+
+SWEP.Primary.Damage = 5
+SWEP.Primary.FireRate = 0
+SWEP.Primary.BulletSpread = VECTOR_CONE_15DEGREES
 SWEP.Primary.ClipSize		= 6
 SWEP.Primary.DefaultClip	= 6
 SWEP.Primary.Automatic		= true
@@ -18,11 +27,22 @@ SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic	= true
 SWEP.Secondary.Ammo			= "none"
 
-SWEP.AutoSwitchTo		= false
-SWEP.AutoSwitchFrom		= false
-SWEP.ViewModelFOV = 54
+SWEP.SINGLE = ""
+SWEP.EMPTY = ""
+SWEP.DEPLOY = ""
+SWEP.RELOAD = ""
+SWEP.SPECIAL1 = ""
+SWEP.SPECIAL2 = ""
+SWEP.SPECIAL3 = ""
 
-DEFINE_BASECLASS( "weapon_base" )
+SWEP.m_fMinRange1 = 65
+SWEP.m_fMinRange2 = 65
+SWEP.m_fMaxRange1 = 1024
+SWEP.m_fMaxRange2 = 1024
+
+SWEP.m_bMeleeWeapon = false
+SWEP.m_bReloadsSingly = false
+SWEP.m_bFiresUnderwater = false
 
 VECTOR_CONE_PRECALCULATED = vec3_origin
 VECTOR_CONE_1DEGREES = Vector( 0.00873, 0.00873, 0.00873 )
@@ -38,25 +58,8 @@ VECTOR_CONE_10DEGREES = Vector( 0.08716, 0.08716, 0.08716 )
 VECTOR_CONE_15DEGREES = Vector( 0.13053, 0.13053, 0.13053 )
 VECTOR_CONE_20DEGREES = Vector( 0.17365, 0.17365, 0.17365 )
 
-SWEP.SINGLE = "Weapon_357.Single"
-SWEP.EMPTY = "Weapon_Pistol.Empty"
-SWEP.DEPLOY = ""
-SWEP.RELOAD = "Weapon_SMG1.Reload"
-SWEP.SPECIAL1 = ""
-SWEP.SPECIAL2 = ""
-SWEP.SPECIAL3 = ""
-
-SWEP.m_fMinRange1 = 65
-SWEP.m_fMinRange2 = 65
-SWEP.m_fMaxRange1 = 1024
-SWEP.m_fMaxRange2 = 1024
-
-SWEP.m_bMeleeWeapon = false
-SWEP.m_bReloadsSingly = false
-SWEP.m_bFiresUnderwater = false
-
 function SWEP:GetBulletSpread()
-    return VECTOR_CONE_15DEGREES
+    return self.Primary.BulletSpread
 end
 
 function SWEP:SetupDataTables()
@@ -453,11 +456,11 @@ function SWEP:GetPrimaryAttackActivity()
 end
 
 function SWEP:GetDamage()
-    return 5
+    return self.Primary.Damage
 end
 
 function SWEP:GetFireRate()
-    return 0
+    return self.Primary.FireRate
 end
 
 function SWEP:AddViewKick()

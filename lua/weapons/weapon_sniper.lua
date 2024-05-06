@@ -1,22 +1,28 @@
 SWEP.PrintName			= "SNIPER RIFLE"
 SWEP.Author			= "Strafe"
 SWEP.Spawnable			= true
-SWEP.Category           = "Half-Life 2 Extended"
 SWEP.AdminOnly			= false
-SWEP.UseHands			= true
+SWEP.Base = "weapon_hl2mpbasehlmpcombatweapon_strafe"
+DEFINE_BASECLASS( "weapon_hl2mpbasehlmpcombatweapon_strafe" )
+
 SWEP.Slot				= 3
 SWEP.SlotPos			= 3
 SWEP.DrawAmmo			= true
+SWEP.AutoSwitchTo		= false
+SWEP.AutoSwitchFrom		= false
+
 SWEP.ViewModel			= "models/weapons/c_sniper.mdl"
+SWEP.ViewModelFOV = 54
 SWEP.ViewModelFlip = false
 SWEP.WorldModel			= "models/weapons/w_sniper.mdl"
-SWEP.CSMuzzleFlashes	= false
-SWEP.HoldType			= "ar2"
-SWEP.FiresUnderwater = true
-SWEP.Base = "weapon_hl2mpbasehlmpcombatweapon_strafe"
-DEFINE_BASECLASS( "weapon_hl2mpbasehlmpcombatweapon_strafe" )
-SWEP.ViewModelFOV = 54
 
+SWEP.Category           = "Half-Life 2 Extended"
+SWEP.FiresUnderwater = false
+
+SWEP.HoldType			= "ar2"
+
+SWEP.Primary.FireRate = 1
+SWEP.Primary.BulletSpread = Vector(0,0,0)
 SWEP.Primary.ClipSize		= 1
 SWEP.Primary.DefaultClip	= 5
 SWEP.Primary.Automatic		= true
@@ -26,11 +32,6 @@ SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic	= false
 SWEP.Secondary.Ammo			= "none"
-
-SWEP.AutoSwitchTo		= false
-SWEP.AutoSwitchFrom		= false
-
-SWEP.m_bReloadsSingly = false
 
 SWEP.SINGLE = "Weapon_SniperRifle.Single"
 SWEP.EMPTY = "Weapon_Pistol.Empty"
@@ -47,7 +48,7 @@ SWEP.m_fMaxRange2 = 1024
 function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
 	surface.SetDrawColor( Color(255, 220, 0, 255) )
     surface.SetMaterial( Material("sprites/w_icons2.vmt") )
-    surface.DrawTexturedRectUV( x, y+tall*0.2, wide, tall/2, 0, 0.75, 0.5, 1 )
+    surface.DrawTexturedRectUV( x, y+tall*0.2, wide, tall/2, 0, 0.80, 0.5, 1 )
 end
 
 function SWEP:DrawHUD()
@@ -87,14 +88,6 @@ end
 
 function SWEP:GetDamage()
     return GetConVar("sk_plr_dmg_sniper_round"):GetInt()
-end
-
-function SWEP:GetFireRate()
-	return 1
-end
-
-function SWEP:GetBulletSpread()
-	return Vector(0,0,0)
 end
 
 function SWEP:DoSecondaryAttack()

@@ -2,18 +2,22 @@ SWEP.PrintName			= "ALYX GUN"
 SWEP.Author			= "Strafe"
 SWEP.Spawnable			= false
 SWEP.AdminOnly			= false
-SWEP.UseHands			= true
+SWEP.Base = "weapon_hl2mpbase_machinegun_strafe"
+DEFINE_BASECLASS( "weapon_hl2mpbase_machinegun_strafe" )
+
 SWEP.Slot				= 1
 SWEP.SlotPos			= 2
 SWEP.DrawAmmo			= true
+SWEP.AutoSwitchTo		= false
+SWEP.AutoSwitchFrom		= false
+
 SWEP.ViewModel			= "models/weapons/c_alyx_gun.mdl"
 SWEP.ViewModelFlip = false
 SWEP.WorldModel			= "models/weapons/w_alyx_gun.mdl"
-SWEP.CSMuzzleFlashes	= false
-SWEP.HoldType			= "pistol"
+
 SWEP.FiresUnderwater = true
-SWEP.Base = "weapon_hl2mpbase_machinegun_strafe"
---SWEP.ViewModelFOV = 45
+
+SWEP.HoldType			= "pistol"
 
 SWEP.Primary.ClipSize		= 30
 SWEP.Primary.DefaultClip	= 30
@@ -25,9 +29,6 @@ SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic	= false
 SWEP.Secondary.Ammo			= "none"
 
-SWEP.AutoSwitchTo		= false
-SWEP.AutoSwitchFrom		= false
-
 SWEP.m_bReloadsSingly = false
 
 if ( !IsMounted( "ep2" ) ) then
@@ -38,8 +39,6 @@ end
 SWEP.EMPTY = "Weapon_Pistol.Empty"
 SWEP.DEPLOY = ""
 SWEP.RELOAD = "Weapon_Pistol.Reload"
-
-DEFINE_BASECLASS( "weapon_hl2mpbase_machinegun_strafe" )
 
 function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
 	surface.SetDrawColor( Color(255, 255, 0, 255) )

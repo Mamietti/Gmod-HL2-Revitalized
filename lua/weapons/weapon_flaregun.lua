@@ -1,21 +1,25 @@
 SWEP.PrintName			= "FLARE GUN"
 SWEP.Author			= "Strafe"
 SWEP.Spawnable			= true
-SWEP.Category           = "Half-Life 2 Extended"
 SWEP.AdminOnly			= false
-SWEP.UseHands			= true
+SWEP.Base = "weapon_hl2mpbasehlmpcombatweapon_strafe"
+DEFINE_BASECLASS( "weapon_hl2mpbasehlmpcombatweapon_strafe" )
+
 SWEP.Slot				= 1
 SWEP.SlotPos			= 3
 SWEP.DrawAmmo			= true
+SWEP.AutoSwitchTo		= false
+SWEP.AutoSwitchFrom		= false
+
 SWEP.ViewModel			= "models/weapons/c_pistol.mdl"
+SWEP.ViewModelFOV = 55
 SWEP.ViewModelFlip = false
 SWEP.WorldModel			= "models/weapons/w_pistol.mdl"
-SWEP.CSMuzzleFlashes	= false
-SWEP.HoldType			= "pistol"
+
+SWEP.Category           = "Half-Life 2 Extended"
 SWEP.FiresUnderwater = true
-SWEP.Base = "weapon_hl2mpbasehlmpcombatweapon_strafe"
-DEFINE_BASECLASS( "weapon_hl2mpbasehlmpcombatweapon_strafe" )
-SWEP.ViewModelFOV = 55
+
+SWEP.HoldType			= "pistol"
 
 SWEP.Primary.ClipSize		= 1
 SWEP.Primary.DefaultClip	= 5
@@ -26,9 +30,6 @@ SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic	= false
 SWEP.Secondary.Ammo			= "none"
-
-SWEP.AutoSwitchTo		= false
-SWEP.AutoSwitchFrom		= false
 
 SWEP.m_bReloadsSingly = false
 
