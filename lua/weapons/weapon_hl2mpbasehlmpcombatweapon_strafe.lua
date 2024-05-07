@@ -68,7 +68,7 @@ function SWEP:IsWeaponLowered()
 end
 
 function SWEP:WeaponShouldBeLowered()
-	if !table.HasValue({ACT_VM_IDLE_LOWERED,ACT_VM_IDLE,ACT_VM_IDLE_TO_LOWERED,ACT_VM_LOWERED_TO_IDLE}, self:GetSaveTable().m_iIdealActivity) then
+	if self:CanLower() and !table.HasValue({ACT_VM_IDLE_LOWERED,ACT_VM_IDLE,ACT_VM_IDLE_TO_LOWERED,ACT_VM_LOWERED_TO_IDLE}, self:GetSaveTable().m_iIdealActivity) then
 		if self:IsWeaponLowered() then
 			return true
 		end
@@ -113,7 +113,9 @@ function SWEP:HasWeaponIdleTimeElapsed()
             return true
         end
     else
-        if ( CurTime() > self:GetWeaponIdleTime()) then
+		-- HACK: In multiplayer, if there is no lowered animation on the model 
+		-- it might play reload anim twice unless we delay the next idle
+        if ( CurTime() > self:GetWeaponIdleTime() + 0.05) then
             return true
         end
     end
