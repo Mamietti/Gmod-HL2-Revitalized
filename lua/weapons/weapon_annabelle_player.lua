@@ -86,7 +86,7 @@ function SWEP:DoPrimaryAttack()
 		bullet.Tracer	= 0									-- Show a tracer on every x bullets 
 		bullet.AmmoType = self.Primary.Ammo
 		bullet.Damage = self:GetDamage()
-		self:FireBullets(bullet)
+		self.Owner:FireBullets(bullet)
         
         self.Owner:ViewPunch( Angle( math.Rand( -2, -1 ), math.Rand( -2, 2 ), 0 ) )
 

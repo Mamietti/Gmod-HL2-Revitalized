@@ -23,6 +23,8 @@ SWEP.HoldType			= "ar2"
 
 SWEP.Primary.FireRate = 1
 SWEP.Primary.BulletSpread = Vector(0,0,0)
+SWEP.Primary.TracerOverride = "AR2Tracer"
+SWEP.Primary.TracerRate = 1
 SWEP.Primary.ClipSize		= 1
 SWEP.Primary.DefaultClip	= 5
 SWEP.Primary.Automatic		= true

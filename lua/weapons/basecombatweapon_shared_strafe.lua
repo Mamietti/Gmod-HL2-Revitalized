@@ -17,6 +17,8 @@ SWEP.HoldType			= "pistol"
 SWEP.Primary.Damage = 5
 SWEP.Primary.FireRate = 0
 SWEP.Primary.BulletSpread = VECTOR_CONE_15DEGREES
+SWEP.Primary.TracerOverride = nil
+SWEP.Primary.TracerRate = 2
 SWEP.Primary.ClipSize		= 6
 SWEP.Primary.DefaultClip	= 6
 SWEP.Primary.Automatic		= true
@@ -441,7 +443,10 @@ function SWEP:DoPrimaryAttack()
 	end
 
 	info.AmmoType = self.Primary.Ammo
-	info.Tracer	= 2
+	info.Tracer	= self.Primary.TracerRate
+	if self.Primary.TracerOverride != nil then
+		info.TracerName = self.Primary.TracerOverride
+	end
 
     info.Spread = self:GetBulletSpread()
 
