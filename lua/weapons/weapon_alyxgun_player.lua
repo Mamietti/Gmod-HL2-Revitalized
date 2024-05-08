@@ -34,7 +34,7 @@ SWEP.m_bReloadsSingly = false
 if ( !IsMounted( "ep2" ) ) then
     SWEP.SINGLE = "Weapon_Pistol.NPC_Single"
 else
-    SWEP.SINGLE = "Weapon_AlyxGun.Single"
+    SWEP.SINGLE = "Weapon_Alyx_Gun.Single"
 end
 SWEP.EMPTY = "Weapon_Pistol.Empty"
 SWEP.DEPLOY = ""
