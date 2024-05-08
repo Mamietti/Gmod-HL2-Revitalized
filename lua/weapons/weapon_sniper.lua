@@ -23,7 +23,7 @@ SWEP.HoldType			= "ar2"
 
 SWEP.Primary.FireRate = 1
 SWEP.Primary.BulletSpread = Vector(0,0,0)
-SWEP.Primary.TracerOverride = "AR2Tracer"
+SWEP.Primary.TracerOverride = "HelicopterTracer"
 SWEP.Primary.TracerRate = 1
 SWEP.Primary.ClipSize		= 1
 SWEP.Primary.DefaultClip	= 5
@@ -76,6 +76,17 @@ function SWEP:SetupDataTables()
     BaseClass.SetupDataTables(self)
     self:NetworkVar( "Float" , 5 , "NextZoom" )
     self:NetworkVar( "Int" , 5 , "ZoomLevel" )
+end
+
+function SWEP:DoImpactEffect( tr, nDamageType )
+
+	if ( tr.HitSky ) then return end
+	
+	local effectdata = EffectData()
+	effectdata:SetOrigin( tr.HitPos + tr.HitNormal )
+	effectdata:SetNormal( tr.HitNormal )
+	util.Effect( "AR2Impact", effectdata )
+
 end
 
 function SWEP:Holster()
