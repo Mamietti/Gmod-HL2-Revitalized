@@ -1,6 +1,6 @@
-SWEP.PrintName			= "Dual Pistols"
+SWEP.PrintName			= "DUAL PISTOLS"
 SWEP.Author			= "Strafe"
-SWEP.Category	= "Half-Life 2 Plus"
+SWEP.Category	= "Half-Life 2 Extended"
 SWEP.Spawnable			= true
 SWEP.AdminOnly			= false
 SWEP.UseHands			= true

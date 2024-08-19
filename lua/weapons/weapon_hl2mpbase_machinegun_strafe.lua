@@ -49,6 +49,11 @@ function SWEP:DoPrimaryAttack()
 		info.Tracer	= 2									-- Show a tracer on every x bullets 
 		info.AmmoType = self.Primary.Ammo
 		info.Damage = self:GetDamage()
+
+        info.Tracer	= self.Primary.TracerRate
+        if self.Primary.TracerOverride != nil then
+            info.TracerName = self.Primary.TracerOverride
+        end
         
         self:WeaponSound(self.SINGLE)
         fireRate = self:GetFireRate()

@@ -322,7 +322,7 @@ function SWEP:DefaultReloadAlt(iActivity)
 		end
 	end
 
-	if self:UsesClipsForAmmo1() then
+	if self:UsesClipsForAmmo2() then
 		--need to reload secondary clip?
 		local secondary	= math.min(self:GetMaxClip2() - self:Clip2(), self.Owner:GetAmmoCount(self.Secondary.Ammo))
 		if secondary != 0 then
