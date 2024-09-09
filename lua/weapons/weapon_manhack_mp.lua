@@ -33,21 +33,8 @@ SWEP.Secondary.Ammo			= "none"
 
 SWEP.NextDeploy = nil
 
-function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
-    local letter = "A"
-	surface.SetDrawColor( color_transparent )
-	surface.SetTextColor( 255, 220, 0, alpha )
-	surface.SetFont( "WeaponIconsLarge" )
-	local w, h = surface.GetTextSize(letter)
-	surface.SetTextPos( x + ( wide - w ) / 2,
-						y + ( tall - h ) / 2 )
-                        
-	surface.DrawText( letter )
-    surface.SetFont( "WeaponIconsSelectedLarge" )
-    	surface.SetTextPos( x + ( wide / 2 ) - ( w / 2 ),
-						y + ( tall / 2 ) - ( h / 2 ) )
-    surface.DrawText( letter )
-end
+SWEP.WeaponLetter = "A"
+SWEP.WeaponSelectedLetter = "A"
 
 function SWEP:SetupDataTables()
     BaseClass.SetupDataTables( self )

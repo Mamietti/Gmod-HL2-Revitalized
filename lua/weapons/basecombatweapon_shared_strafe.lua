@@ -46,6 +46,13 @@ SWEP.m_bMeleeWeapon = false
 SWEP.m_bReloadsSingly = false
 SWEP.m_bFiresUnderwater = false
 
+SWEP.WeaponFont = "WeaponIconsLarge"
+SWEP.WeaponLetter = nil
+SWEP.WeaponSelectedFont = "WeaponIconsSelectedLarge"
+SWEP.WeaponSelectedLetter = nil
+
+SWEP.IconMaterial = Material("sprites/w_icons2.vmt")
+
 VECTOR_CONE_PRECALCULATED = vec3_origin
 VECTOR_CONE_1DEGREES = Vector( 0.00873, 0.00873, 0.00873 )
 VECTOR_CONE_2DEGREES = Vector( 0.01745, 0.01745, 0.01745 )
@@ -60,6 +67,28 @@ VECTOR_CONE_10DEGREES = Vector( 0.08716, 0.08716, 0.08716 )
 VECTOR_CONE_15DEGREES = Vector( 0.13053, 0.13053, 0.13053 )
 VECTOR_CONE_20DEGREES = Vector( 0.17365, 0.17365, 0.17365 )
 
+function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
+	if self.WeaponLetter != nil and self.WeaponSelectedLetter != nil then
+		surface.SetDrawColor( color_transparent )
+		surface.SetTextColor( 255, 220, 0, alpha )
+		surface.SetFont( self.WeaponFont )
+		local w, h = surface.GetTextSize(self.WeaponLetter)
+		surface.SetTextPos( x + ( wide - w ) / 2,
+							y + ( tall - h ) / 2 )
+							
+		surface.DrawText( self.WeaponLetter )
+		surface.SetFont( self.WeaponSelectedFont )
+		surface.SetTextPos( x + ( wide / 2 ) - ( w / 2 ),
+						y + ( tall / 2 ) - ( h / 2 ) )
+		surface.DrawText( self.WeaponSelectedLetter )		
+	elseif eu then
+		surface.SetDrawColor( Color(255, 220, 0, 255) )
+		surface.SetMaterial( self.IconMaterial )
+		surface.GetTextureSize()
+		surface.DrawTexturedRectUV( x, y+tall*0.2, wide, tall/2, 0, 0.80, 0.5, 1 )
+	end
+end
+
 function SWEP:GetBulletSpread()
     return self.Primary.BulletSpread
 end
@@ -73,11 +102,11 @@ function SWEP:SetupDataTables()
 end
 
 function SWEP:UsesPrimaryAmmo()
-    return self.Primary.Ammo != "None"
+    return self.Primary.Ammo != "none"
 end
 
 function SWEP:UsesSecondaryAmmo()
-    return self.Secondary.Ammo != "None"
+    return self.Secondary.Ammo != "none"
 end
 
 function SWEP:HasPrimaryAmmo()
