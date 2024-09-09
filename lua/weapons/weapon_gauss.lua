@@ -1,4 +1,6 @@
 SWEP.PrintName			= "TAU CANNON"
+SWEP.Spawnable          = true
+SWEP.AdminOnly          = false
 
 SWEP.Author			= "Strafe"
 SWEP.Slot				= 2
@@ -33,7 +35,7 @@ SWEP.Primary.Ammo			= "GaussEnergy"
 
 SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
-SWEP.Secondary.Automatic	= false
+SWEP.Secondary.Automatic	= true
 SWEP.Secondary.Ammo			= "none"
 
 SWEP.SINGLE = "PropJeep.FireCannon"
@@ -46,7 +48,6 @@ SWEP.m_fMaxRange2 = 1024
 
 SWEP.NextDeploy = nil
 SWEP.StartTime = nil
-SWEP.DamageMult = 0
 SWEP.Sound = nil
 
 
@@ -54,6 +55,12 @@ SWEP.Sound = nil
 	Reload does nothing
 ---------------------------------------------------------*/
 function SWEP:Reload()
+end
+
+function SWEP:SetupDataTables()
+    BaseClass.SetupDataTables(self)
+    self:NetworkVar( "Float", "DamageMult" )
+    self:NetworkVar( "Bool", "Charging" )
 end
 
 function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
@@ -171,9 +178,12 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
+    if CLIENT then return end
     local view = self.Owner:GetViewModel()
     if self:Ammo1()>1 then
-        if self.DamageMult==0 then
+        local damageMult = self:GetDamageMult()
+        if !self:GetCharging() then
+            self:SetCharging(true)
             local sound = CreateSound(self,"weapons/gauss/chargeloop.wav")
             sound:Play()
             sound:ChangePitch( 255, 2 )
@@ -183,8 +193,9 @@ function SWEP:SecondaryAttack()
             view:SendViewModelMatchingSequence( view:LookupSequence("spin") )
             self.NextIdle = nil
         end
-        if self.DamageMult<5 then
-            self.DamageMult = self.DamageMult + 1
+        if damageMult<5 then
+            self:SetDamageMult(damageMult + 1)
+            print(self:GetDamageMult())
             self:TakePrimaryAmmo(2)
         end
     end
@@ -221,9 +232,11 @@ function SWEP:Think()
         self.Owner:TakeDamage(50)
         self:ResetSecondary()
     end
-    if self.Owner:KeyReleased(IN_ATTACK2) and self.DamageMult>0 then
-        self:FireBeam(self.DamageMult)
-        self.Owner:SetVelocity(-self.Owner:GetAimVector()*75*self.DamageMult)
+    if !self.Owner:KeyDown(IN_ATTACK2) and self:GetCharging() then
+        print("FIRED")
+        self:SetCharging(false)
+        self:FireBeam(self:GetDamageMult())
+        self.Owner:SetVelocity(-self.Owner:GetAimVector()*75*self:GetDamageMult())
         self:ResetSecondary()
     end
 end
@@ -233,7 +246,7 @@ function SWEP:ResetSecondary()
     self:SendWeaponAnim( ACT_VM_SECONDARYATTACK )
     self:SetNextSecondaryFire(CurTime() + 1.5)
     self:SetNextPrimaryFire(CurTime() + 1.5)
-    self.DamageMult = 0
+    self:SetDamageMult(0)
     self.ZapTime = nil
     self.NextIdle = CurTime() + self:SequenceDuration()
     self.Sound:Stop()
@@ -274,6 +287,8 @@ function SWEP:Initialize()
 		self:SetNPCFireRate( self.Primary.Delay )
 	end
 	self:SetWeaponHoldType("shotgun")
+    self:SetDamageMult(0)
+    self:SetCharging(false)
 end
 
 function SWEP:SetupWeaponHoldTypeForAI( t )
