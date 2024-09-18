@@ -77,24 +77,24 @@ function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
 	surface.DrawText( "h" )
 end
 
-function SWEP:DrawBeam( startPos, endPos, width, useMuzzle )
+function SWEP:DrawBeam( startPos, endPos, width )
     
-    local angles = self.Owner:EyeAngles()
-    local forward = angles:Forward()
-    local up = angles:Up()
-    local right = angles:Right()
-    local shootpos = self.Owner:GetShootPos()+right*10+forward*20-up*8
     local effectdata2 = EffectData()
-    effectdata2:SetOrigin( trace.HitPos)
-    effectdata2:SetStart(shootpos)
+    effectdata2:SetOrigin( endPos )
+    effectdata2:SetStart( startPos )
     effectdata2:SetScale(6000)
-    effectdata2:SetAngles( Vector(trace.HitPos-shootpos):Angle())
-    effectdata2:SetNormal( trace.HitNormal )
-    effectdata2:SetEntity( trace.Entity )
-    effectdata2:SetSurfaceProp( trace.SurfaceProps )
-    effectdata2:SetHitBox( trace.HitBox )
+    effectdata2:SetAngles( Vector(endPos-startPos):Angle())
     effectdata2:SetFlags(0)
     util.Effect( "GaussTracer", effectdata2, false, true)
+    
+    if SERVER then
+
+    local hit = ents.Create("info_particle_system")
+    hit:SetPos(endPos)
+    hit:SetName("target"..tostring(self.Owner))
+    hit:SetAngles(self:GetAngles())
+    hit:Spawn()
+    hit:Activate()
 
 	--//Draw the main beam shaft
 	--CBeam *pBeam = CBeam::BeamCreate( GAUSS_BEAM_SPRITE, 0.5 );
@@ -108,6 +108,26 @@ function SWEP:DrawBeam( startPos, endPos, width, useMuzzle )
 	--pBeam->SetColor( 255, 185+random->RandomInt( -16, 16 ), 40 );
 	--pBeam->RelinkBeam();
 	--pBeam->LiveForTime( 0.1f );
+    
+    local zappy = ents.Create( "env_beam" )
+    zappy:SetKeyValue( "texture", GAUSS_BEAM_SPRITE )
+    zappy:SetPos(startPos)
+    zappy:SetKeyValue( "LightningStart", "beam"..tostring(self.Owner) )
+    zappy:SetKeyValue("LightningEnd", "target"..tostring(self.Owner) )
+    --pBeam->SetEndAttachment( LookupAttachment("Muzzle") );
+    zappy:SetKeyValue( "BoltWidth", width )
+    
+    zappy:SetKeyValue( "life", "0" )
+    --zappy:SetKeyValue( "NoiseAmplitude", "1" )
+    zappy:SetKeyValue( "damage", "0" )
+    zappy:SetKeyValue( "Spawnflags", "17" )
+    zappy:SetName("beam"..tostring(self.Owner))
+    zappy:SetColor(Color(255,255,255,100))
+    zappy:Spawn()
+    zappy:Activate()
+
+    hit:Fire("kill",0,0.1)
+    zappy:Fire("kill",0,0.1)
 
 	--//Draw electric bolts along shaft
 	--pBeam = CBeam::BeamCreate( GAUSS_BEAM_SPRITE, 3.0f );
@@ -122,6 +142,8 @@ function SWEP:DrawBeam( startPos, endPos, width, useMuzzle )
 	--pBeam->LiveForTime( 0.1f );
 	--pBeam->SetNoise( 1.6f );
 	--pBeam->SetEndWidth( 0.1f );
+    
+    end
 end
 
 function SWEP:ChargeCannon()
@@ -285,7 +307,7 @@ end
 
 function SWEP:DoImpactEffect( tr, nDamageType )
 
-	self:DrawBeam()
+	self:DrawBeam(tr.StartPos, tr.HitPos, 2.4)
     
     if bit.band( tr.SurfaceFlags, SURF_SKY ) == SURF_SKY then
 		--CPVSFilter filter( tr.endpos );
@@ -309,14 +331,6 @@ function SWEP:FireCannon()
 
 	--//Find the direction the gun is pointing in
 	local aimDir = self.Owner:GetAimVector()
-	--GetCannonAim( &aimDir );
-
---#if defined( WIN32 ) && !defined( _X360 ) 
-	--// NVNT apply a punch on fire
-	--HapticPunch(m_hPlayer,0,0,hap_jeep_cannon_mag.GetFloat());
---#endif
-    local ammoId = game.GetAmmoID(self.Primary.Ammo)
-    --local ammoData = game.GetAmmoData(ammoId)
 
     local tr = self.Owner:GetEyeTrace()
     local info = {}
@@ -328,12 +342,8 @@ function SWEP:FireCannon()
     info.Attacker = self.Owner
     
     -- HOX: Why do we need to do this?
-    info.Damage = game.GetAmmoNPCDamage(ammoId)
+    info.Damage = game.GetAmmoNPCDamage(game.GetAmmoID(self.Primary.Ammo))
     info.Tracer = 0
-    info.Callback = function(attacker,tr,dmginfo)
-        trace = tr
-        --shootpos = self.Owner:GetShootPos()
-    end
 
 	self:FireBullets( info )
 
@@ -344,7 +354,6 @@ function SWEP:FireCannon()
 		--m_hPlayer->RumbleEffect( RUMBLE_PISTOL, 0, RUMBLE_FLAG_RESTART	);
 	--}
 
-	--CPASAttenuationFilter sndFilter( this, "PropJeep.FireCannon" );
 	self:EmitSound("PropJeep.FireCannon")
     self:SendWeaponAnimIdeal(ACT_VM_PRIMARYATTACK)
 	
