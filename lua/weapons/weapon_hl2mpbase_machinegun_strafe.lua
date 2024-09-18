@@ -18,6 +18,10 @@ SWEP.RELOAD = "Weapon_SMG1.Reload"
 SWEP.SPECIAL1 = ""
 SWEP.SPECIAL2 = ""
 
+SWEP.KickMinX = 0.2
+SWEP.KickMinY = 0.2
+SWEP.KickMinZ = 0.1
+
 function SWEP:Initialize()
     BaseClass.Initialize(self)
     self:SetShotsFired(0)
@@ -75,9 +79,9 @@ function SWEP:FireBullets(info)
 end
 
 function SWEP:DoMachineGunKick( maxVerticleKickAngle, fireDurationTime, slideLimitTime)
-	KICK_MIN_X	= 0.2
-	KICK_MIN_Y	= 0.2
-	KICK_MIN_Z	= 0.1
+	KICK_MIN_X	= self.KickMinX
+	KICK_MIN_Y	= self.KickMinY
+	KICK_MIN_Z	= self.KickMinZ
 	vecScratch = Angle(0,0,0)
 	duration	= math.min(fireDurationTime,slideLimitTime)
 	kickPerc = duration / slideLimitTime
