@@ -53,6 +53,7 @@ function SWEP:GetDamage()
 end
 
 function SWEP:AddViewKick()
+	self.Owner:SetVelocity(self.Owner:GetAimVector()*-20)
 	self:DoMachineGunKick(self.MaxVerticalKick, self:GetFireDuration(), self.SlideLimit)
 end
 
@@ -69,11 +70,6 @@ function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
 	surface.SetTextPos( x + ( wide / 2 ) - ( w / 2 ),
 						y + ( tall / 2 ) - ( h / 2 ) )
 	surface.DrawText( "z" )
-end
-
----HOXHOX! not functional yet
-function SWEP:WithFire()
-    self.Owner:SetVelocity(self.Owner:GetAimVector()*-20)
 end
 
 list.Add( "NPCUsableWeapons", { class = "weapon_hmg1",	title = "HMG1" }  )
