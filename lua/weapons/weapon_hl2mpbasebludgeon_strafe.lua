@@ -26,6 +26,8 @@ SWEP.SINGLE = "Weapon_Crowbar.Single"
 SWEP.MELEE_HIT = "Weapon_Crowbar.Melee_Hit"
 
 SWEP.BLUDGEON_HULL_DIM = 16
+SWEP.HitActivity = ACT_VM_HITCENTER
+SWEP.DamageType = DMG_CLUB
 
 function SWEP:Initialize()
     BaseClass.Initialize(self)
@@ -84,7 +86,7 @@ function SWEP:Hit(traceHit, nHitActivity, bIsSecondary )
 		info:SetAttacker(self.Owner)
 		info:SetInflictor(self)
 		info:SetDamage(self:GetDamageForActivity( nHitActivity ))
-		info:SetDamageType(DMG_CLUB)
+		info:SetDamageType(self.DamageType)
 
 		self:CalculateMeleeDamageForce( info, hitDirection, traceHit.HitPos );
 		traceHit.HitGroup = HITGROUP_CHEST --HACKHACK equalize damage for Half-Life-ness
@@ -141,7 +143,7 @@ function SWEP:ChooseIntersectionPointAndActivity( hitTrace, mins, maxs, pOwner )
 	else
 		hitTrace = tmpTrace
 	end
-	return ACT_VM_HITCENTER;
+	return self.HitActivity;
 end
 
 function SWEP:ImpactWater(start, endpos)
@@ -174,7 +176,7 @@ function SWEP:ImpactEffect(traceHit)
 	if self:ImpactWater(traceHit.StartPos, traceHit.HitPos) then
 		return
 	end
-	self:ImpactTrace(traceHit,DMG_CLUB)
+	self:ImpactTrace(traceHit,self.DamageType)
 end
 
 function SWEP:ImpactTrace(traceHit,dmgtype)
@@ -207,7 +209,7 @@ function SWEP:Swing(IsSecondary)
 	
 	swingEnd = swingStart + forward * self:GetRange()
 	traceHit = util.TraceLine({ start = swingStart, endpos = swingEnd, mask = MASK_SHOT_HULL, filter = pOwner, collisiongroup = COLLISION_GROUP_NONE })
-	nHitActivity = ACT_VM_HITCENTER
+	nHitActivity = self.HitActivity
 
 	--CTakeDamageInfo triggerInfo( GetOwner(), GetOwner(), GetDamageForActivity( nHitActivity ), DMG_CLUB );
 	--triggerInfo.SetDamagePosition( traceHit.startpos );

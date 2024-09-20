@@ -36,6 +36,13 @@ SWEP.EMPTY = "Weapon_Pistol.Empty"
 SWEP.DEPLOY = ""
 SWEP.RELOAD = "Weapon_Pistol.Reload"
 
+SWEP.WeaponLetter = "dd"
+SWEP.WeaponSelectedLetter = "dd"
+
+if CLIENT then
+	killicon.AddFont("weapon_pistol_double", "HL2MPTypeDeath", "--", Color(255, 100, 0, 255))
+end
+
 function SWEP:GetDamage()
     return GetConVar("sk_plr_dmg_pistol"):GetInt()
 end

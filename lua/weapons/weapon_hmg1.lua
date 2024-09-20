@@ -44,6 +44,15 @@ SWEP.RELOAD = ""
 SWEP.SPECIAL1 = "Weapon_Shotgun.Special1"
 SWEP.m_bReloadsSingly = false
 
+SWEP.WeaponFont = "CSWeaponIconsLarge"
+SWEP.WeaponLetter = "z"
+SWEP.WeaponSelectedFont = "CSWeaponIconsSelectedLarge"
+SWEP.WeaponSelectedLetter = "z"
+
+if CLIENT then
+	killicon.AddFont("weapon_hmg1", "CSKillIcons", "z", Color(255, 100, 0, 255))
+end
+
 function SWEP:GetBulletSpread()
 	return VECTOR_CONE_7DEGREES
 end
@@ -55,21 +64,6 @@ end
 function SWEP:AddViewKick()
 	self.Owner:SetVelocity(self.Owner:GetAimVector()*-20)
 	self:DoMachineGunKick(self.MaxVerticalKick, self:GetFireDuration(), self.SlideLimit)
-end
-
-if CLIENT then
-	killicon.AddFont("weapon_hmg1", "CSKillIcons", "z", Color(255, 100, 0, 255))
-end
-
-function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
-	surface.SetDrawColor( color_transparent )
-	surface.SetTextColor( 255, 220, 0, alpha )
-	surface.SetFont( "CSKillIcons" )
-	local w, h = surface.GetTextSize("z")
-
-	surface.SetTextPos( x + ( wide / 2 ) - ( w / 2 ),
-						y + ( tall / 2 ) - ( h / 2 ) )
-	surface.DrawText( "z" )
 end
 
 list.Add( "NPCUsableWeapons", { class = "weapon_hmg1",	title = "HMG1" }  )
