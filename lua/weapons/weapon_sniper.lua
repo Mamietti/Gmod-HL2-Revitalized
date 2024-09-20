@@ -100,7 +100,7 @@ function SWEP:Holster()
 end
 
 function SWEP:GetDamage()
-    return GetConVar("sk_plr_dmg_sniper_round"):GetInt()
+    return GetConVar("sk_npc_dmg_sniper_round"):GetInt()
 end
 
 function SWEP:DoSecondaryAttack()
