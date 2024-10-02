@@ -48,11 +48,16 @@ SWEP.m_fMaxRange2 = 1024
 
 SWEP.Sound = nil
 
+SWEP.WeaponLetter = "h"
+SWEP.WeaponSelectedLetter = "h"
+
 local GAUSS_CHARGE_TIME = 0.2
 local MAX_GAUSS_CHARGE = 16
 local MAX_GAUSS_CHARGE_TIME = 3
 local DANGER_GAUSS_CHARGE_TIME = 10
 local GAUSS_NUM_BEAMS = 4
+
+local GAUSS_BEAM_SPRITE = "sprites/laserbeam.vtf"
 
 /*---------------------------------------------------------
 	Reload does nothing
@@ -64,17 +69,6 @@ function SWEP:SetupDataTables()
 end
 
 function SWEP:Reload()
-end
-
-function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
-	surface.SetDrawColor( color_transparent )
-	surface.SetTextColor( 255, 220, 0, alpha )
-	surface.SetFont( "HL2HUDFONT" )
-	local w, h = surface.GetTextSize("h")
-
-	surface.SetTextPos( x + ( wide / 2 ) - ( w / 2 ),
-						y + ( tall / 2 ) - ( h / 2 ) )
-	surface.DrawText( "h" )
 end
 
 function SWEP:DrawBeam( startPos, endPos, width )
@@ -89,59 +83,47 @@ function SWEP:DrawBeam( startPos, endPos, width )
     
     if SERVER then
 
-    local hit = ents.Create("info_particle_system")
+    local hit = ents.Create("info_target")
     hit:SetPos(endPos)
     hit:SetName("target"..tostring(self.Owner))
-    hit:SetAngles(self:GetAngles())
     hit:Spawn()
     hit:Activate()
-
-	--//Draw the main beam shaft
-	--CBeam *pBeam = CBeam::BeamCreate( GAUSS_BEAM_SPRITE, 0.5 );
-	
-	--pBeam->SetStartPos( startPos );
-	--pBeam->PointEntInit( endPos, this );
-	--pBeam->SetEndAttachment( LookupAttachment("Muzzle") );
-	--pBeam->SetWidth( width );
-	--pBeam->SetEndWidth( 0.05f );
-	--pBeam->SetBrightness( 255 );
-	--pBeam->SetColor( 255, 185+random->RandomInt( -16, 16 ), 40 );
-	--pBeam->RelinkBeam();
-	--pBeam->LiveForTime( 0.1f );
+	hit:Fire("kill",0,0.1)
     
     local zappy = ents.Create( "env_beam" )
+	zappy:SetPos(startPos)
     zappy:SetKeyValue( "texture", GAUSS_BEAM_SPRITE )
-    zappy:SetPos(startPos)
-    zappy:SetKeyValue( "LightningStart", "beam"..tostring(self.Owner) )
-    zappy:SetKeyValue("LightningEnd", "target"..tostring(self.Owner) )
+	zappy:SetKeyValue( "Spawnflags", "17" )
+	zappy:SetName("beam"..tostring(self.Owner))
+    zappy:SetKeyValue( "LightningStart", zappy:GetName() )
+    zappy:SetKeyValue("LightningEnd", hit:GetName() )
     --pBeam->SetEndAttachment( LookupAttachment("Muzzle") );
-    zappy:SetKeyValue( "BoltWidth", width )
+    zappy:SetKeyValue( "BoltWidth", width*0.25 )
     
     zappy:SetKeyValue( "life", "0" )
-    --zappy:SetKeyValue( "NoiseAmplitude", "1" )
     zappy:SetKeyValue( "damage", "0" )
-    zappy:SetKeyValue( "Spawnflags", "17" )
-    zappy:SetName("beam"..tostring(self.Owner))
-    zappy:SetColor(Color(255,255,255,100))
+    zappy:SetColor(Color(255,185+math.random(-16,16),40,255))
     zappy:Spawn()
     zappy:Activate()
+	zappy:Fire("kill",0,0.1)
 
-    hit:Fire("kill",0,0.1)
-    zappy:Fire("kill",0,0.1)
-
-	--//Draw electric bolts along shaft
-	--pBeam = CBeam::BeamCreate( GAUSS_BEAM_SPRITE, 3.0f );
-	
-	--pBeam->SetStartPos( startPos );
-	--pBeam->PointEntInit( endPos, this );
-	--pBeam->SetEndAttachment( LookupAttachment("Muzzle") );
-
-	--pBeam->SetBrightness( random->RandomInt( 64, 255 ) );
-	--pBeam->SetColor( 255, 255, 150+random->RandomInt( 0, 64 ) );
-	--pBeam->RelinkBeam();
-	--pBeam->LiveForTime( 0.1f );
-	--pBeam->SetNoise( 1.6f );
-	--pBeam->SetEndWidth( 0.1f );
+	local zappy2 = ents.Create( "env_beam" )
+	zappy2:SetPos(startPos)
+    zappy2:SetKeyValue( "texture", GAUSS_BEAM_SPRITE )
+	zappy2:SetKeyValue( "Spawnflags", "17" )
+	zappy2:SetName("beam2"..tostring(self.Owner))
+    zappy2:SetKeyValue( "LightningStart", zappy2:GetName() )
+    zappy2:SetKeyValue("LightningEnd", hit:GetName() )
+    --pBeam->SetEndAttachment( LookupAttachment("Muzzle") );
+    zappy2:SetKeyValue( "BoltWidth", width*0.3 )
+    
+    zappy2:SetKeyValue( "life", "0" )
+    zappy2:SetKeyValue( "damage", "0" )
+    zappy2:SetColor(Color(255,255,150+math.random(0,64),math.random( 64, 255 )))
+	zappy2:Fire("noise", "1.6", 0)
+    zappy2:Spawn()
+    zappy2:Activate()
+	zappy2:Fire("kill",0,0.1)
     
     end
 end
@@ -307,7 +289,12 @@ end
 
 function SWEP:DoImpactEffect( tr, nDamageType )
 
-	self:DrawBeam(tr.StartPos, tr.HitPos, 2.4)
+	local forward = self.Owner:EyeAngles():Forward()
+    local up = self.Owner:EyeAngles():Up()
+    local right = self.Owner:EyeAngles():Right()  
+    local shootpos = self.Owner:GetShootPos()+right*10+forward*20-up*8
+
+	self:DrawBeam(shootpos, tr.HitPos, 2.4)
     
     if bit.band( tr.SurfaceFlags, SURF_SKY ) == SURF_SKY then
 		--CPVSFilter filter( tr.endpos );
@@ -340,19 +327,21 @@ function SWEP:FireCannon()
     info.Spread   = VECTOR_CONE_1DEGREES
     info.AmmoType = self.Primary.AmmoType
     info.Attacker = self.Owner
+	info.Callback = function(attacker,tr,dmginfo)
+        dmginfo:SetDamageType(DMG_SHOCK)
+    end
     
     -- HOX: Why do we need to do this?
     info.Damage = game.GetAmmoNPCDamage(game.GetAmmoID(self.Primary.Ammo))
     info.Tracer = 0
 
 	self:FireBullets( info )
+	self.Owner:RemoveAmmo( 1, self.Primary.Ammo )
 
 	--// Register a muzzleflash for the AI
-	--if ( m_hPlayer )
-	--{
-		--m_hPlayer->SetMuzzleFlashTime( gpGlobals->curtime + 0.5 );
-		--m_hPlayer->RumbleEffect( RUMBLE_PISTOL, 0, RUMBLE_FLAG_RESTART	);
-	--}
+	if self.Owner:IsPlayer() then
+		self.Owner:MuzzleFlash()
+	end
 
 	self:EmitSound("PropJeep.FireCannon")
     self:SendWeaponAnimIdeal(ACT_VM_PRIMARYATTACK)
