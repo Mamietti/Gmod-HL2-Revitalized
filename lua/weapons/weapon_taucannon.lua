@@ -14,8 +14,8 @@ SWEP.DrawAmmo			= true
 SWEP.AutoSwitchTo		= false
 SWEP.AutoSwitchFrom		= false
 
-SWEP.ViewModel			= "models/v_gauss.mdl"
-SWEP.ViewModelFOV = 85
+SWEP.ViewModel			= "models/weapons/c_taucannon.mdl"
+SWEP.ViewModelFOV = 54
 SWEP.ViewModelFlip = false
 SWEP.WorldModel			= "models/w_gauss.mdl"
 
