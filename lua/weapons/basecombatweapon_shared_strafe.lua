@@ -507,6 +507,33 @@ end
 function SWEP:DoSecondaryAttack()
 end
 
+function SWEP:ImpactTrace(traceHit,dmgtype)
+
+	data = EffectData()
+	data:SetOrigin(traceHit.HitPos)
+	data:SetStart(traceHit.StartPos)
+	data:SetSurfaceProp(traceHit.SurfaceProps)
+	data:SetDamageType(dmgtype)
+	data:SetHitBox(traceHit.HitBox)
+	if CLIENT then
+		data:SetEntity(traceHit.Entity)
+	else
+		data:SetEntIndex(traceHit.Entity:EntIndex())
+	end
+	util.Effect( "Impact", data )
+end
+
+function SWEP:CalculateBulletDamageForce( info, bulletType, bulletDir, forceOrigin, scale )
+	info:SetReportedPosition( forceOrigin )
+	local vecForce = bulletDir
+	vecForce:Normalize()
+	vecForce = vecForce * game.GetAmmoForce( bulletType )
+	vecForce = vecForce * GetConVar("phys_pushscale"):GetFloat();
+	vecForce = vecForce * scale;
+	info:SetDamageForce( vecForce );
+	--Assert(vecForce!=vec3_origin);
+end
+
 /********************************************************
 	SWEP Construction Kit base code
 		Created by Clavus

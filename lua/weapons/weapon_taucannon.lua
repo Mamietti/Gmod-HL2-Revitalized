@@ -35,7 +35,7 @@ SWEP.Primary.Ammo			= "GaussEnergy"
 
 SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
-SWEP.Secondary.Automatic	= false
+SWEP.Secondary.Automatic	= true
 SWEP.Secondary.Ammo			= "none"
 
 SWEP.SINGLE = "PropJeep.FireCannon"
@@ -59,16 +59,25 @@ local GAUSS_NUM_BEAMS = 4
 
 local GAUSS_BEAM_SPRITE = "sprites/laserbeam.vtf"
 
+SWEP.SoundCannonCharge = nil
+
 /*---------------------------------------------------------
 	Reload does nothing
 ---------------------------------------------------------*/
 
 function SWEP:SetupDataTables()
     BaseClass.SetupDataTables(self)
-    self:NetworkVar( "Bool" , 0 , "CannonCharging" )
+    self:NetworkVar( "Bool", "CannonCharging" )
+	self:NetworkVar( "Float", "CannonChargeStartTime" )
+	self:NetworkVar( "Float", "ChargeAmount" )
+	--self:NetworkVar( "Entity", "SoundCannonCharge" )
 end
 
 function SWEP:Reload()
+end
+
+function SWEP:GetDamage()
+	return game.GetAmmoNPCDamage(game.GetAmmoID(self.Primary.Ammo))
 end
 
 function SWEP:DrawBeam( startPos, endPos, width )
@@ -130,160 +139,148 @@ end
 
 function SWEP:ChargeCannon()
     --//Don't fire again if it's been too soon
-	--if ( m_flCannonTime > gpGlobals->curtime )
-		--return;
+	if self:GetNextSecondaryFire() > CurTime() then return end
 
 	--//See if we're starting a charge
-	--if ( m_bCannonCharging == false )
-	--{
-		--m_flCannonChargeStartTime = gpGlobals->curtime;
-		--m_bCannonCharging = true;
+	if !self:GetCannonCharging() then
+		self:SetCannonChargeStartTime(CurTime())
+		self:SetCannonCharging(true)
 
 		--//Start charging sound
 		--CPASAttenuationFilter filter( this );
 		--m_sndCannonCharge = (CSoundEnvelopeController::GetController()).SoundCreate( filter, entindex(), CHAN_STATIC, "Jeep.GaussCharge", ATTN_NORM );
+		local snd = CreateSound(self, "Jeep.GaussCharge")
+		self.SoundCannonCharge = snd
 
-		--if ( m_hPlayer )
-		--{
-			--m_hPlayer->RumbleEffect( RUMBLE_FLAT_LEFT, (int)(0.1 * 100), RUMBLE_FLAG_RESTART | RUMBLE_FLAG_LOOP | RUMBLE_FLAG_INITIAL_SCALE );
-		--}
+		if ( self.SoundCannonCharge != nil ) then
+			--local snd = self:GetSoundCannonCharge()
+			self.SoundCannonCharge:PlayEx(1, 50)
+            self.SoundCannonCharge:ChangePitch( 250, 3 )
+		end
 
-		--assert(m_sndCannonCharge!=NULL);
-		--if ( m_sndCannonCharge != NULL )
-		--{
-			--(CSoundEnvelopeController::GetController()).Play( m_sndCannonCharge, 1.0f, 50 );
-			--(CSoundEnvelopeController::GetController()).SoundChangePitch( m_sndCannonCharge, 250, 3.0f );
-		--}
-
-		--return;
-	--}
-	--else
-	--{
+	end
 		--float flChargeAmount = ( gpGlobals->curtime - m_flCannonChargeStartTime ) / MAX_GAUSS_CHARGE_TIME;
-		--if ( flChargeAmount > 1.0f )
-		--{
-			--flChargeAmount = 1.0f;
-		--}
+	self:SetChargeAmount((CurTime() - self:GetCannonChargeStartTime()) / MAX_GAUSS_CHARGE_TIME)
+	if self:GetChargeAmount() > 1.0 then
+		self:SetChargeAmount(1)
+	else
+		self.Owner:RemoveAmmo( 1, self.Primary.Ammo )
+	end
 
-		--float rumble = flChargeAmount * 0.5f;
+	self:SetNextSecondaryFire(CurTime() + GAUSS_CHARGE_TIME)
+end
 
-		--if( m_hPlayer )
-		--{
-			--m_hPlayer->RumbleEffect( RUMBLE_FLAT_LEFT, (int)(rumble * 100), RUMBLE_FLAG_UPDATE_SCALE );
-		--}
-	--}
+function SWEP:StopChargeSound()
+	if self.SoundCannonCharge != nil then
+		self.SoundCannonCharge:FadeOut(0.1)
+	end
 end
 
 function SWEP:FireChargedCannon()
-    --bool penetrated = false;
+    local penetrated = false;
 
-	--m_bCannonCharging	= false;
-	--m_flCannonTime		= gpGlobals->curtime + 0.5f;
+	self:SetCannonCharging(false)
 
-	--StopChargeSound();
+	self:SetNextPrimaryFire(CurTime() + 0.5)
+	self:SetNextSecondaryFire(CurTime() + 0.5)
 
-	--CPASAttenuationFilter sndFilter( this, "PropJeep.FireChargedCannon" );
-	--EmitSound( sndFilter, entindex(), "PropJeep.FireChargedCannon" );
+	self:StopChargeSound();
 
-	--if( m_hPlayer )
-	--{
-		--m_hPlayer->RumbleEffect( RUMBLE_357, 0, RUMBLE_FLAG_RESTART );
-	--}
+	self:EmitSound( "PropJeep.FireChargedCannon" )
 
 	--//Find the direction the gun is pointing in
-	--Vector aimDir;
-	--GetCannonAim( &aimDir );
+	local aimDir = self.Owner:GetAimVector()
 
-	--Vector endPos = m_vecGunOrigin + ( aimDir * MAX_TRACE_LENGTH );
+	local endPos = self.Owner:GetShootPos() + ( aimDir * 56756 );
 	
 	--//Shoot a shot straight out
-	--trace_t	tr;
-	--UTIL_TraceLine( m_vecGunOrigin, endPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
-	
-	--ClearMultiDamage();
-
-	--//Find how much damage to do
-	--float flChargeAmount = ( gpGlobals->curtime - m_flCannonChargeStartTime ) / MAX_GAUSS_CHARGE_TIME;
-
-	--//Clamp this
-	--if ( flChargeAmount > 1.0f )
-	--{
-		--flChargeAmount = 1.0f;
-	--}
+	local tr = util.TraceLine( {
+		start = self.Owner:GetShootPos(),
+		endpos = endPos,
+		filter = {self, self.Owner},
+		mask = MASK_SHOT,
+		collisiongroup = COLLISION_GROUP_NONE
+	} )
 
 	--//Determine the damage amount
-	--//FIXME: Use ConVars!
-	--float flDamage = 15 + ( ( 250 - 15 ) * flChargeAmount );
+	flDamage = (1 + ( ( MAX_GAUSS_CHARGE - 1 ) * self:GetChargeAmount() )) * self:GetDamage();
 
-	--CBaseEntity *pHit = tr.m_pEnt;
+	pHit = tr.Entity;
 	
 	--//Look for wall penetration
-	--if ( tr.DidHitWorld() && !(tr.surface.flags & SURF_SKY) )
-	--{
+	if ( tr.HitWorld and not tr.HitSky ) then
 		--//Try wall penetration
-		--UTIL_ImpactTrace( &tr, m_nBulletType, "ImpactJeep" );
-		--UTIL_DecalTrace( &tr, "RedGlowFade" );
+		self:ImpactTrace(tr, DMG_SHOCK)
+		util.Decal("RedGlowFade",tr.HitPos+tr.HitNormal, tr.HitPos-tr.HitNormal)
 
-		--CPVSFilter filter( tr.endpos );
-		--te->GaussExplosion( filter, 0.0f, tr.endpos, tr.plane.normal, 0 );
+		if SERVER then
+			local filter = RecipientFilter()
+			filter:AddPVS(tr.HitPos)
+			self:GaussExplosion( filter, 0.0, tr.HitPos, tr.HitNormal, 0 );
+		end
 		
-		--Vector	testPos = tr.endpos + ( aimDir * 48.0f );
+		local testPos = tr.HitPos + ( aimDir * 48.0 );
 
-		--UTIL_TraceLine( testPos, tr.endpos, MASK_SHOT, GetDriver(), COLLISION_GROUP_NONE, &tr );
+		tr = util.TraceLine( {
+			start = testPos,
+			endpos = tr.HitPos,
+			filter = self.Owner,
+			mask = MASK_SHOT,
+			collisiongroup = COLLISION_GROUP_NONE
+		} )
 			
-		--if ( tr.allsolid == false )
-		--{
-			--UTIL_DecalTrace( &tr, "RedGlowFade" );
+		if !tr.AllSolid then
+			util.Decal("RedGlowFade",tr.HitPos+tr.HitNormal, tr.HitPos-tr.HitNormal)
 
-			--penetrated = true;
-		--}
-	--}
-	--else if ( pHit != NULL )
-	--{
+			penetrated = true;
+		end
+	elseif pHit != nil then
 		--CTakeDamageInfo dmgInfo( this, GetDriver(), flDamage, DMG_SHOCK );
-		--CalculateBulletDamageForce( &dmgInfo, GetAmmoDef()->Index("GaussEnergy"), aimDir, tr.endpos, 1.0f + flChargeAmount * 4.0f );
-
-		--//Do direct damage to anything in our path
-		--pHit->DispatchTraceAttack( dmgInfo, aimDir, &tr );
-	--}
+		local dmgInfo = DamageInfo()
+		dmgInfo:SetAttacker(self.Owner)
+		dmgInfo:SetInflictor(self)
+		dmgInfo:SetDamage(flDamage)
+		dmgInfo:SetDamageType(DMG_SHOCK)
+		self:CalculateBulletDamageForce( dmgInfo, game.GetAmmoID( self.Primary.Ammo ), aimDir, tr.HitPos, 1.0 + self:GetChargeAmount() * 4.0 );
+		pHit:DispatchTraceAttack( dmgInfo, tr, aimDir )
+	end
 
 	--ApplyMultiDamage();
 
 	--//Kick up an effect
-	--if ( !(tr.surface.flags & SURF_SKY) )
-	--{
-  		--UTIL_ImpactTrace( &tr, m_nBulletType, "ImpactJeep" );
-
+	if !tr.HitSky then
+		self:ImpactTrace(tr, DMG_SHOCK)
+		util.Decal("RedGlowFade",tr.HitPos+tr.HitNormal, tr.HitPos-tr.HitNormal)
 		--//Do a gauss explosion
-		--CPVSFilter filter( tr.endpos );
-		--te->GaussExplosion( filter, 0.0f, tr.endpos, tr.plane.normal, 0 );
-	--}
+		if SERVER then
+			local filter = RecipientFilter()
+			filter:AddPVS(tr.HitPos)
+			self:GaussExplosion( filter, 0.0, tr.HitPos, tr.HitNormal, 0 );
+		end
+	end
 
 	--//Show the effect
-	--DrawBeam( m_vecGunOrigin, tr.endpos, 9.6 );
+	local forward = self.Owner:EyeAngles():Forward()
+    local up = self.Owner:EyeAngles():Up()
+    local right = self.Owner:EyeAngles():Right()  
+    local shootpos = self.Owner:GetShootPos()+right*10+forward*20-up*8
+
+	self:DrawBeam( shootpos, tr.HitPos, 9.6 );
 
 	--// Register a muzzleflash for the AI
-	--if ( m_hPlayer )
-	--{
-		--m_hPlayer->SetMuzzleFlashTime( gpGlobals->curtime + 0.5f );
-	--}
-
-	--//Rock the car
-	--IPhysicsObject *pObj = VPhysicsGetObject();
-
-	--if ( pObj != NULL )
-	--{
-		--Vector	shoveDir = aimDir * -( flDamage * 500.0f );
-
-		--pObj->ApplyForceOffset( shoveDir, m_vecGunOrigin );
-	--}
+	self.Owner:MuzzleFlash()
 
 	--//Do radius damage if we didn't penetrate the wall
-	--if ( penetrated == true )
-	--{
-		--RadiusDamage( CTakeDamageInfo( this, this, flDamage, DMG_SHOCK ), tr.endpos, 200.0f, CLASS_NONE, NULL );
-	--}
-    --}
+	if penetrated == true then
+		local dmgInfo = DamageInfo()
+		dmgInfo:SetAttacker(self.Owner)
+		dmgInfo:SetInflictor(self)
+		dmgInfo:SetDamage(flDamage)
+		dmgInfo:SetDamageType(DMG_SHOCK)
+		util.BlastDamageInfo(dmgInfo, tr.HitPos, 200)
+	end
+
+	self:SendWeaponAnimIdeal( ACT_VM_SECONDARYATTACK )
 
 end
 
@@ -296,24 +293,29 @@ function SWEP:DoImpactEffect( tr, nDamageType )
 
 	self:DrawBeam(shootpos, tr.HitPos, 2.4)
     
-    if bit.band( tr.SurfaceFlags, SURF_SKY ) == SURF_SKY then
-		--CPVSFilter filter( tr.endpos );
-		--te->GaussExplosion( filter, 0.0f, tr.endpos, tr.plane.normal, 0 );
+    if ( tr.HitSky ) then return end
 
-		--UTIL_ImpactTrace( &tr, m_nBulletType );
-	end
+	local filter = RecipientFilter()
+	filter:AddPVS(tr.HitPos)
+	self:GaussExplosion( filter, 0.0, tr.HitPos, tr.HitNormal, 0 );
 
+	self:ImpactTrace(tr, nDamageType)
+	util.Decal("RedGlowFade",tr.HitPos+tr.HitNormal, tr.HitPos-tr.HitNormal)
+end
+
+function SWEP:GaussExplosion(filter, x, pos, normal, y)
+	local effectdata = EffectData()
+	effectdata:SetOrigin( pos )
+	effectdata:SetMagnitude(2)
+	effectdata:SetScale(1)
+	effectdata:SetRadius(5)
+	util.Effect( "Sparks", effectdata, false, filter )
 end
 
 function SWEP:FireCannon()
-    --//Don't fire again if it's been too soon
-	--if ( m_flCannonTime > gpGlobals->curtime )
-		--return;
-
-	--if ( m_bUnableToFire )
-		--return;
 
 	self:SetNextPrimaryFire(CurTime() + 0.2)
+	self:SetNextSecondaryFire(CurTime() + 0.2)
 	self:SetCannonCharging(false)
 
 	--//Find the direction the gun is pointing in
@@ -332,7 +334,7 @@ function SWEP:FireCannon()
     end
     
     -- HOX: Why do we need to do this?
-    info.Damage = game.GetAmmoNPCDamage(game.GetAmmoID(self.Primary.Ammo))
+    info.Damage = self:GetDamage()
     info.Tracer = 0
 
 	self:FireBullets( info )
@@ -360,6 +362,8 @@ function SWEP:DoPrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
+	if self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then return end
+
     self:ChargeCannon()
 end
 
