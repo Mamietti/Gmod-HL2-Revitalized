@@ -58,6 +58,7 @@ local DANGER_GAUSS_CHARGE_TIME = 10
 local GAUSS_NUM_BEAMS = 4
 
 local GAUSS_BEAM_SPRITE = "sprites/laserbeam.vtf"
+local JEEP_GUN_SPIN_RATE = 20
 
 SWEP.SoundCannonCharge = nil
 
@@ -70,6 +71,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar( "Bool", "CannonCharging" )
 	self:NetworkVar( "Float", "CannonChargeStartTime" )
 	self:NetworkVar( "Float", "ChargeAmount" )
+	self:NetworkVar( "Int", "SpinPos" )
 	--self:NetworkVar( "Entity", "SoundCannonCharge" )
 end
 
@@ -158,6 +160,7 @@ function SWEP:ChargeCannon()
             self.SoundCannonCharge:ChangePitch( 250, 3 )
 		end
 
+		self:SendWeaponAnimIdeal(ACT_VM_PULLBACK)
 	end
 		--float flChargeAmount = ( gpGlobals->curtime - m_flCannonChargeStartTime ) / MAX_GAUSS_CHARGE_TIME;
 	self:SetChargeAmount((CurTime() - self:GetCannonChargeStartTime()) / MAX_GAUSS_CHARGE_TIME)
@@ -168,6 +171,16 @@ function SWEP:ChargeCannon()
 	end
 
 	self:SetNextSecondaryFire(CurTime() + GAUSS_CHARGE_TIME)
+end
+
+function SWEP:WeaponIdle()
+    if self:HasWeaponIdleTimeElapsed() then
+		if self:GetCannonCharging() then
+			self:SendWeaponAnimIdeal(ACT_VM_PULLBACK)
+		else
+			self:SendWeaponAnimIdeal(ACT_VM_IDLE)
+		end
+    end
 end
 
 function SWEP:StopChargeSound()
@@ -369,6 +382,10 @@ end
 
 function SWEP:Think()
     BaseClass.Think(self)
+	if self:GetCannonCharging() then
+		self:SetSpinPos(self:GetSpinPos() + JEEP_GUN_SPIN_RATE)
+		self.Owner:GetViewModel():SetBoneController(1, self:GetSpinPos())
+	end
     if self.Owner:KeyReleased(IN_ATTACK2) and self:GetCannonCharging() then
         self:FireChargedCannon()
     end
