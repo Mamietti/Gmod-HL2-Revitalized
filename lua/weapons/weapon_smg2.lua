@@ -1,6 +1,6 @@
 SWEP.PrintName			= "SMG2"
 SWEP.Author			= "Strafe"
-SWEP.Category	= "Half-Life 2 Extended"
+SWEP.Category	= "Counter-Life 2"
 SWEP.Spawnable			= true
 SWEP.AdminOnly			= false
 SWEP.Base = "weapon_hl2mpbase_selectfiremachinegun_strafe"
