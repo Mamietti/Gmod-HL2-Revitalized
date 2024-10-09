@@ -17,7 +17,7 @@ SWEP.AutoSwitchFrom		= false
 SWEP.ViewModel			= "models/weapons/c_taucannon.mdl"
 SWEP.ViewModelFOV = 54
 SWEP.ViewModelFlip = false
-SWEP.WorldModel			= "models/w_gauss.mdl"
+SWEP.WorldModel			= "models/weapons/w_gauss_hls.mdl"
 
 SWEP.Category           = "Half-Life 2 Extended"
 SWEP.FiresUnderwater = false
@@ -294,6 +294,7 @@ function SWEP:FireChargedCannon()
 	end
 
 	self:SendWeaponAnimIdeal( ACT_VM_SECONDARYATTACK )
+	self.Owner:SetAnimation( PLAYER_ATTACK1 )
 
 end
 
@@ -360,6 +361,7 @@ function SWEP:FireCannon()
 
 	self:EmitSound("PropJeep.FireCannon")
     self:SendWeaponAnimIdeal(ACT_VM_PRIMARYATTACK)
+	self.Owner:SetAnimation( PLAYER_ATTACK1 )
 	
 	--// make cylinders of gun spin a bit
 	--m_nSpinPos += JEEP_GUN_SPIN_RATE;
@@ -411,4 +413,4 @@ function SWEP:SetupWeaponHoldTypeForAI( t )
 	return end	
 end
 
-list.Add( "NPCUsableWeapons", { class = "weapon_gauss",	title = "Tau Cannon" }  )
+list.Add( "NPCUsableWeapons", { class = "weapon_taucannon",	title = "Tau Cannon" }  )
