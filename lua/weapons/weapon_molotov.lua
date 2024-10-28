@@ -103,7 +103,7 @@ function SWEP:DoPrimaryAttack()
 	pPlayer:RemoveAmmo( 1, self.Primary.Ammo );
 
     self:SendWeaponAnimIdeal(ACT_VM_THROW)
-
+    self.Owner:SetAnimation( PLAYER_ATTACK1 )
 	
 	// Don't fire again until fire animation has completed
 	vm = self.Owner:GetViewModel()

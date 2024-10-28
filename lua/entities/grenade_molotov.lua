@@ -154,9 +154,6 @@ function ENT:Detonate()
 		local growth = 0.1 + ( 0.75 * ( offset / 128.0 ) )
 
 		if firetrace.fraction != 1.0 then
-            local effectdata = EffectData()
-            effectdata:SetOrigin( firetrace.HitPos )
-            util.Effect( "balloon_pop", effectdata )
 			self:StartFire( firetrace.HitPos, scale, growth, 30.0, 4 + 2 + 32, self ); // (SF_FIRE_START_ON|SF_FIRE_SMOKELESS|SF_FIRE_NO_GLOW)
         end
     end
