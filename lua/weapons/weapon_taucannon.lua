@@ -17,7 +17,7 @@ SWEP.AutoSwitchFrom		= false
 SWEP.ViewModel			= "models/weapons/c_taucannon.mdl"
 SWEP.ViewModelFOV = 54
 SWEP.ViewModelFlip = false
-SWEP.WorldModel			= "models/weapons/w_gauss_hls.mdl"
+SWEP.WorldModel			= "models/weapons/w_taucannon.mdl"
 
 SWEP.Category           = "Half-Life 2 Extended"
 SWEP.FiresUnderwater = false
