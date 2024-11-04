@@ -11,10 +11,10 @@ SWEP.DrawAmmo			= true
 SWEP.AutoSwitchTo		= false
 SWEP.AutoSwitchFrom		= false
 
-SWEP.ViewModel			= "models/weapons/c_pistol.mdl"
+SWEP.ViewModel			= "models/weapons/c_flaregun.mdl"
 SWEP.ViewModelFOV = 55
 SWEP.ViewModelFlip = false
-SWEP.WorldModel			= "models/weapons/w_pistol.mdl"
+SWEP.WorldModel			= "models/weapons/w_flaregun.mdl"
 
 SWEP.Category           = "Half-Life 2 Extended"
 SWEP.FiresUnderwater = true
@@ -54,13 +54,7 @@ function SWEP:DoDrawCrosshair( x, y )
 	return true
 end
 
-function SWEP:SetupDataTables()
-    BaseClass.SetupDataTables(self)
-    self:NetworkVar( "Bool" , 5 , "NeedHolster" )
-end
-
 function SWEP:DoPrimaryAttack()
-    if self:GetNeedHolster() then return end
 	if self.Owner then
 		if self:Clip1()<=0 then
 			self:SendWeaponAnimIdeal(ACT_VM_DRYFIRE)
@@ -84,22 +78,21 @@ function SWEP:DoPrimaryAttack()
 	end
 end
 
-function SWEP:ItemPreFrame()
-    if self:GetNeedHolster() then
-        self:SendWeaponAnimIdeal(ACT_VM_DRAW)
-        self:WeaponSound("Weapon_Shotgun.Reload")
-        self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
-        self:SetNextSecondaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
-        self:SetNeedHolster(false)
-    end
-    BaseClass.ItemPreFrame()
-end
+function SWEP:DrawWorldModel()
+	if not self.Owner:IsValid() then
+		self:DrawModel()
+	else
+		local hand, offset, rotate
+		hand = self.Owner:GetAttachment(self.Owner:LookupAttachment("anim_attachment_rh"))
+		offset = hand.Ang:Right() * 1 + hand.Ang:Forward() * 4 + hand.Ang:Up() * 3
 
-function SWEP:FinishReload()
-    self:SetNeedHolster(true)
-	BaseClass.FinishReload(self)
-end
+		hand.Ang:RotateAroundAxis(hand.Ang:Right(), 90)
+		hand.Ang:RotateAroundAxis(hand.Ang:Forward(), 90)
+		hand.Ang:RotateAroundAxis(hand.Ang:Up(), -90)
 
-function SWEP:DoReload()
-    return self:DefaultReloadAlt(ACT_VM_HOLSTER)
+		self:SetRenderOrigin(hand.Pos + offset)
+		self:SetRenderAngles(hand.Ang)
+
+		self:DrawModel()
+	end
 end
