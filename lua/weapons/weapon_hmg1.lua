@@ -65,5 +65,3 @@ function SWEP:AddViewKick()
 	self.Owner:SetVelocity(self.Owner:GetAimVector()*-20)
 	self:DoMachineGunKick(self.MaxVerticalKick, self:GetFireDuration(), self.SlideLimit)
 end
-
-list.Add( "NPCUsableWeapons", { class = "weapon_hmg1",	title = "HMG1" }  )

@@ -412,5 +412,3 @@ function SWEP:SetupWeaponHoldTypeForAI( t )
 	self.ActivityTranslateAI [ ACT_RELOAD ] 					= ACT_RELOAD_SHOTGUN
 	return end	
 end
-
-list.Add( "NPCUsableWeapons", { class = "weapon_taucannon",	title = "Tau Cannon" }  )
