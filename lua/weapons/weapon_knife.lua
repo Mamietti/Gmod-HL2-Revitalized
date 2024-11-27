@@ -14,7 +14,7 @@ SWEP.ViewModel			= "models/weapons/cstrike/c_knife_t.mdl"
 SWEP.ViewModelFlip = false
 SWEP.WorldModel			= "models/weapons/w_knife_t.mdl"
 
-SWEP.Category           = "Counter-Life 2"
+SWEP.Category           = "Half-Life 2 Extended"
 SWEP.FiresUnderwater = true
 
 SWEP.HoldType			= "melee2"

@@ -1,6 +1,6 @@
 SWEP.PrintName			= "AR1"
 SWEP.Author			= "Strafe"
-SWEP.Category	= "Counter-Life 2"
+SWEP.Category	= "Half-Life 2 Extended"
 SWEP.Spawnable			= true
 SWEP.AdminOnly			= false
 SWEP.Base = "weapon_hl2mpbase_machinegun_strafe"
