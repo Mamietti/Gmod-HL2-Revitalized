@@ -6,8 +6,8 @@ SWEP.AdminOnly			= false
 SWEP.Base = "weapon_hl2mpbase_machinegun_strafe"
 DEFINE_BASECLASS( "weapon_hl2mpbase_machinegun_strafe" )
 
-SWEP.Slot				= 2
-SWEP.SlotPos			= 2
+SWEP.Slot				= 1
+SWEP.SlotPos			= 3
 SWEP.DrawAmmo			= true
 SWEP.AutoSwitchTo		= false
 SWEP.AutoSwitchFrom		= false
@@ -17,7 +17,7 @@ SWEP.WorldModel			= "models/weapons/w_pist_deagle.mdl"
 SWEP.ViewModelFOV = 50
 
 SWEP.CSMuzzleFlashes	= true
-SWEP.HoldType			= "revolver"
+SWEP.HoldType			= "pistol"
 SWEP.FiresUnderwater = false
 
 SWEP.Primary.ClipSize		= 7
