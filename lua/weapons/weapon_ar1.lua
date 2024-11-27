@@ -14,7 +14,7 @@ SWEP.AutoSwitchFrom		= false
 
 SWEP.ViewModel			= "models/weapons/cstrike/c_rif_ak47.mdl"
 SWEP.WorldModel			= "models/weapons/w_rif_ak47.mdl"
-SWEP.ViewModelFOV = 60
+SWEP.ViewModelFOV = 50
 
 SWEP.CSMuzzleFlashes	= true
 SWEP.HoldType			= "ar2"
@@ -24,7 +24,7 @@ SWEP.Primary.ClipSize		= 30
 SWEP.Primary.DefaultClip	= 30
 SWEP.Primary.Automatic		= true
 SWEP.Primary.Ammo			= "ar2"
-SWEP.Primary.FireRate = 0.2
+SWEP.Primary.FireRate = 0.1
 
 ---SWEP.EASY_DAMPEN = 0.5
 SWEP.MaxVerticalKick = 2
