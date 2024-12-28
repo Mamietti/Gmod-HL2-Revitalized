@@ -409,14 +409,22 @@ function SWEP:PrimaryAttack()
         -- {
              -- m_flNextPrimaryAttack = gpGlobals->curtime;
         -- }
-
-        self:DoPrimaryAttack()
+		if self.Owner:IsPlayer() then
+			self:DoPrimaryAttack()
+		else
+			self:FireNPCPrimaryAttack(self.Owner, self.Owner:GetShootPos(), self.Owner:GetAimVector())
+		end
 
         -- if ( AutoFiresFullClip() )
         -- {
             -- m_bFiringWholeClip = true;
         -- end
     end
+end
+
+function SWEP:FireNPCPrimaryAttack(pOperator, vecShootOrigin, vecShootDir)
+	--we use this as default
+	self:DoPrimaryAttack()
 end
 
 function SWEP:HandleFireOnEmpty()
@@ -575,6 +583,7 @@ function SWEP:Initialize()
 		
 		-- init view model bone build function
 		if IsValid(self.Owner) then
+			if !self.Owner:IsPlayer() then return end
 			local vm = self.Owner:GetViewModel()
 			if IsValid(vm) then
 				self:ResetBonePositions(vm)

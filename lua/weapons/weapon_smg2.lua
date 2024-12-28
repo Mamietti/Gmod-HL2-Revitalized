@@ -33,6 +33,7 @@ SWEP.Secondary.Automatic	= false
 SWEP.Secondary.Ammo			= "none"
 
 SWEP.SINGLE = "Weapon_MP5Navy.Single"
+SWEP.SINGLE_NPC = "Weapon_MP5Navy.Single"
 SWEP.EMPTY = "Weapon_SMG1.Empty"
 SWEP.BURST = ""
 SWEP.RELOAD = ""
@@ -71,6 +72,35 @@ end
 
 function SWEP:AddViewKick()
 	self:DoMachineGunKick(self.MaxVerticalKick, self:GetFireDuration(), self.SlideLimit)
+end
+
+list.Add( "NPCUsableWeapons", { class = "weapon_smg2",	title = "SMG2" }  )
+
+function SWEP:GetNPCBurstSettings()
+	return 2, 5, self.Primary.FireRate
+end
+
+function SWEP:GetNPCBulletSpread( proficiency )
+	return VECTOR_CONE_PRECALCULATED
+end
+
+function SWEP:FireNPCPrimaryAttack( pOperator, vecShootOrigin, vecShootDir )
+	// FIXME: use the returned number of bullets to account for >10hz firerate
+	self:EmitSound( self.SINGLE_NPC );
+
+	--sound.EmitHint( bit.bor(SOUND_COMBAT, SOUND_CONTEXT_GUNFIRE), pOperator:GetPos(), SOUNDENT_VOLUME_MACHINEGUN, 0.2, pOperator);
+
+	local bulletInfo = {}
+	bulletInfo.Src = vecShootOrigin
+	bulletInfo.Dir = vecShootDir
+	--bulletInfo.Spread = VECTOR_CONE_PRECALCULATED
+	bulletInfo.AmmoType = self:GetPrimaryAmmoType()
+	bulletInfo.Damage = GetConVar("sk_npc_dmg_smg1"):GetInt() * 1.25
+
+	pOperator:FireBullets(bulletInfo)
+
+	pOperator:MuzzleFlash();
+	self:SetClip1(self:Clip1() - 1)
 end
 
 function SWEP:SetupWeaponHoldTypeForAI( t )
