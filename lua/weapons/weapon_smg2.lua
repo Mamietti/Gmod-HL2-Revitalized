@@ -12,7 +12,7 @@ SWEP.DrawAmmo			= true
 SWEP.AutoSwitchTo		= false
 SWEP.AutoSwitchFrom		= false
 
-SWEP.ViewModel			= "models/weapons/cstrike/c_smg_mp5.mdl"
+SWEP.ViewModel			= "models/weapons/c_smg2.mdl"
 SWEP.WorldModel			= "models/weapons/w_smg_mp5.mdl"
 SWEP.ViewModelFOV = 50
 
