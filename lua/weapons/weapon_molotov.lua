@@ -38,10 +38,8 @@ SWEP.Secondary.Ammo			= "none"
 SWEP.SINGLE = ""
 SWEP.EMPTY = ""
 
-SWEP.m_fMinRange1 = 65
-SWEP.m_fMinRange2 = 65
-SWEP.m_fMaxRange1 = 1024
-SWEP.m_fMaxRange2 = 102
+SWEP.m_fMinRange1 = 200
+SWEP.m_fMaxRange1 = 1000
 
 SWEP.WeaponLetter = "h"
 SWEP.WeaponSelectedLetter = "h"
@@ -139,4 +137,68 @@ function SWEP:ItemPostFrame( void )
 		self:DrawAmmo();
     end
     BaseClass.ItemPreFrame(self)
+end
+
+list.Add( "NPCUsableWeapons", { class = "weapon_molotov",	title = "Molotov" }  )
+
+function SWEP:VecCheckToss(pNPC, launchPos, vecTarget, 1.0)
+
+    // Get Toss Vector
+    Vector			throwStart  = pNPC->Weapon_ShootPosition();
+    Vector			vecToss;
+    CBaseEntity*	pBlocker	= NULL;
+    float			throwDist	= (throwStart - vecTarget).Length();
+    float			fGravity	= GetCurrentGravity();
+    float			throwLimit	= pNPC->ThrowLimit(throwStart, vecTarget, fGravity, 35, WorldAlignMins(), WorldAlignMaxs(), pEnemy, &vecToss, &pBlocker);
+
+    // If I can make the throw (or most of the throw)
+    if (!throwLimit || (throwLimit != throwDist && throwLimit > 0.8*throwDist))
+    {
+    return vecToss;
+end
+
+function SWEP:GetNPCBulletSpread( proficiency )
+	return 0
+end
+
+function SWEP:FireNPCPrimaryAttack( pNPC, vecShootOrigin, vecShootDir )
+
+    local pEnemy = pNPC:GetEnemy();
+    if !IsValid(pEnemy) then
+        return
+    end
+
+    local vec_target = pEnemy:GetPos()
+
+    // -----------------------------------------------------
+    //  Get position of throw
+    // -----------------------------------------------------
+    // If owner has a hand, set position to the hand bone position
+    local launchPos = nil
+    local iBIndex = pNPC:LookupBone("ValveBiped.Bip01_R_Hand");
+    if (iBIndex != -1) then
+        launchPos = pNPC:GetBonePosition( iBIndex)
+    else 
+        local vFacingDir = vecShootDir
+        vFacingDir = vFacingDir * 60.0; 
+        launchPos = pNPC:GetPos()+vFacingDir;
+    end
+
+
+    local vecTossVelocity = VecCheckToss( pNPC, launchPos, vec_target, 1.0 );
+
+    ThrowMolotov( launchPos, vecTossVelocity);
+
+    // Drop the weapon and remove as no more ammo
+    pNPC:DropWeapon(self)
+    self:Remove()
+end
+
+function SWEP:SetupWeaponHoldTypeForAI( t )
+
+	self.ActivityTranslateAI = {}
+
+	-- Default is pistol/revolver for reasons
+	self.ActivityTranslateAI[ ACT_RANGE_ATTACK1 ]			= ACT_RANGE_ATTACK_THROW
+	self.ActivityTranslateAI[ ACT_GESTURE_RANGE_ATTACK1 ]	= ACT_GESTURE_RANGE_ATTACK_THROW
 end
