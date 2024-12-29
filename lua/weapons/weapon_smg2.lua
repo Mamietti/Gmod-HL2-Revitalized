@@ -53,6 +53,9 @@ SWEP.WeaponLetter = "x"
 SWEP.WeaponSelectedFont = "CSWeaponIconsSelectedLarge"
 SWEP.WeaponSelectedLetter = "x"
 
+SWEP.m_fMinRange1 = 0
+SWEP.m_fMaxRange1 = 1400
+
 if CLIENT then
 	killicon.AddFont("weapon_smg2", "CSKillIcons", "x", Color(255, 100, 0, 255))
 end
@@ -81,19 +84,19 @@ function SWEP:GetNPCBurstSettings()
 end
 
 function SWEP:GetNPCBulletSpread( proficiency )
-	return VECTOR_CONE_PRECALCULATED
+	--Proficiency from poor to perfect
+	spreadValue = {7, 5, 10/3, 5/3, 1}
+	return spreadValue[proficiency]
 end
 
 function SWEP:FireNPCPrimaryAttack( pOperator, vecShootOrigin, vecShootDir )
-	// FIXME: use the returned number of bullets to account for >10hz firerate
 	self:EmitSound( self.SINGLE_NPC );
 
-	--sound.EmitHint( bit.bor(SOUND_COMBAT, SOUND_CONTEXT_GUNFIRE), pOperator:GetPos(), SOUNDENT_VOLUME_MACHINEGUN, 0.2, pOperator);
+	sound.EmitHint( bit.bor(SOUND_COMBAT, SOUND_CONTEXT_GUNFIRE), pOperator:GetPos(), SOUNDENT_VOLUME_MACHINEGUN, 0.2, pOperator);
 
 	local bulletInfo = {}
 	bulletInfo.Src = vecShootOrigin
 	bulletInfo.Dir = vecShootDir
-	--bulletInfo.Spread = VECTOR_CONE_PRECALCULATED
 	bulletInfo.AmmoType = self:GetPrimaryAmmoType()
 	bulletInfo.Damage = GetConVar("sk_npc_dmg_smg1"):GetInt() * 1.25
 

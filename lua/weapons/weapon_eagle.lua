@@ -33,6 +33,7 @@ SWEP.Secondary.Automatic	= false
 SWEP.Secondary.Ammo			= "none"
 
 SWEP.SINGLE = "Weapon_DEagle.Single"
+SWEP.SINGLE_NPC = "Weapon_DEagle.Single"
 SWEP.EMPTY = "Weapon_SMG1.Empty"
 SWEP.BURST = ""
 SWEP.RELOAD = ""
@@ -40,17 +41,13 @@ SWEP.SPECIAL1 = "Weapon_AR2.Special1"
 SWEP.SPECIAL2 = "Weapon_AR2.Special2"
 SWEP.m_bReloadsSingly = false
 
---SWEP.EASY_DAMPEN = 0.5
-SWEP.MaxVerticalKick = 1
-SWEP.SlideLimit = 2
-SWEP.KickMinX = 0.2
-SWEP.KickMinY = 0.2
-SWEP.KickMinZ = 0.1
-
 SWEP.WeaponFont = "CSWeaponIconsLarge"
 SWEP.WeaponLetter = "f"
 SWEP.WeaponSelectedFont = "CSWeaponIconsSelectedLarge"
 SWEP.WeaponSelectedLetter = "f"
+
+SWEP.m_fMinRange1 = 24
+SWEP.m_fMaxRange1 = 1500
 
 if CLIENT then
 	killicon.AddFont("weapon_eagle", "CSKillIcons", "f", Color(255, 100, 0, 255))
@@ -136,18 +133,29 @@ function SWEP:GetSecondaryAttackActivity()
     return ACT_VM_SECONDARYATTACK
 end
 
-function SWEP:SetupWeaponHoldTypeForAI( t )
+list.Add( "NPCUsableWeapons", { class = "weapon_eagle",	title = "Desert Eagle" }  )
 
-	self.ActivityTranslateAI = {}
-	self.ActivityTranslateAI [ ACT_STAND ] 						= ACT_STAND
-	self.ActivityTranslateAI [ ACT_IDLE_ANGRY ] 				= ACT_IDLE_ANGRY_SMG1
+function SWEP:GetNPCBurstSettings()
+	return 1, 1, self.Primary.FireRate
+end
 
-	self.ActivityTranslateAI [ ACT_MP_RUN ] 					= ACT_HL2MP_RUN_SMG1
-	self.ActivityTranslateAI [ ACT_MP_CROUCHWALK ] 				= ACT_HL2MP_WALK_CROUCH_SMG1
+function SWEP:GetNPCBulletSpread( proficiency )
+	return 5
+end
 
-	self.ActivityTranslateAI [ ACT_RANGE_ATTACK1 ] 				= ACT_RANGE_ATTACK_SMG1
-	self.ActivityTranslateAI [ ACT_RANGE_ATTACK1_LOW ] 				= ACT_RANGE_ATTACK_SMG1_LOW
+function SWEP:FireNPCPrimaryAttack( pOperator, vecShootOrigin, vecShootDir )
+	self:EmitSound( self.SINGLE_NPC );
 
-	self.ActivityTranslateAI [ ACT_RELOAD ] 					= ACT_RELOAD_SMG1
+	sound.EmitHint( bit.bor(SOUND_COMBAT, SOUND_CONTEXT_GUNFIRE), pOperator:GetPos(), SOUNDENT_VOLUME_PISTOL, 0.2, pOperator);
 
+	local bulletInfo = {}
+	bulletInfo.Src = vecShootOrigin
+	bulletInfo.Dir = vecShootDir
+	bulletInfo.AmmoType = self:GetPrimaryAmmoType()
+	bulletInfo.Damage = GetConVar("sk_npc_dmg_357"):GetInt()
+
+	pOperator:FireBullets(bulletInfo)
+
+	pOperator:MuzzleFlash();
+	self:SetClip1(self:Clip1() - 1)
 end

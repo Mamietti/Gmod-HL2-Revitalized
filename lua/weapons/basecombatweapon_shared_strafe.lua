@@ -67,6 +67,9 @@ VECTOR_CONE_10DEGREES = Vector( 0.08716, 0.08716, 0.08716 )
 VECTOR_CONE_15DEGREES = Vector( 0.13053, 0.13053, 0.13053 )
 VECTOR_CONE_20DEGREES = Vector( 0.17365, 0.17365, 0.17365 )
 
+SOUNDENT_VOLUME_MACHINEGUN = 1500
+SOUNDENT_VOLUME_PISTOL = 1500
+
 function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
 	if self.WeaponLetter != nil and self.WeaponSelectedLetter != nil then
 		surface.SetDrawColor( color_transparent )

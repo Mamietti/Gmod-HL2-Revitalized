@@ -23,7 +23,7 @@ SWEP.FiresUnderwater = false
 SWEP.Primary.ClipSize		= 30
 SWEP.Primary.DefaultClip	= 30
 SWEP.Primary.Automatic		= true
-SWEP.Primary.Ammo			= "ar2"
+SWEP.Primary.Ammo			= "smg1"
 SWEP.Primary.FireRate = 0.1
 
 ---SWEP.EASY_DAMPEN = 0.5
@@ -39,6 +39,7 @@ SWEP.Secondary.Automatic	= false
 SWEP.Secondary.Ammo			= "none"
 
 SWEP.SINGLE = "Weapon_AK47.Single"
+SWEP.SINGLE_NPC = "Weapon_AK47.Single"
 SWEP.EMPTY = "Weapon_Shotgun.Empty"
 SWEP.RELOAD = ""
 SWEP.SPECIAL1 = "Weapon_Shotgun.Special1"
@@ -49,6 +50,9 @@ SWEP.WeaponLetter = "b"
 SWEP.WeaponSelectedFont = "CSWeaponIconsSelectedLarge"
 SWEP.WeaponSelectedLetter = "b"
 
+SWEP.m_fMinRange1 = 65
+SWEP.m_fMaxRange1 = 2048
+
 if CLIENT then
 	killicon.AddFont("weapon_ar1", "CSKillIcons", "b", Color(255, 100, 0, 255))
 end
@@ -58,9 +62,38 @@ function SWEP:GetBulletSpread()
 end
 
 function SWEP:GetDamage()
-    return GetConVar("sk_plr_dmg_ar2"):GetInt()
+    return GetConVar("sk_plr_dmg_smg1"):GetInt()
 end
 
 function SWEP:AddViewKick()
 	self:DoMachineGunKick(self.MaxVerticalKick, self:GetFireDuration(), self.SlideLimit)
+end
+
+list.Add( "NPCUsableWeapons", { class = "weapon_ar1",	title = "AR1" }  )
+
+function SWEP:GetNPCBurstSettings()
+	return 2, 5, self.Primary.FireRate
+end
+
+function SWEP:GetNPCBulletSpread( proficiency )
+	--Proficiency from poor to perfect
+	spreadValue = {7, 5, 3, 5/3, 1}
+	return spreadValue[proficiency]
+end
+
+function SWEP:FireNPCPrimaryAttack( pOperator, vecShootOrigin, vecShootDir )
+	self:EmitSound( self.SINGLE_NPC );
+
+	sound.EmitHint( bit.bor(SOUND_COMBAT, SOUND_CONTEXT_GUNFIRE), pOperator:GetPos(), SOUNDENT_VOLUME_MACHINEGUN, 0.2, pOperator);
+
+	local bulletInfo = {}
+	bulletInfo.Src = vecShootOrigin
+	bulletInfo.Dir = vecShootDir
+	bulletInfo.AmmoType = self:GetPrimaryAmmoType()
+	bulletInfo.Damage = GetConVar("sk_npc_dmg_smg1"):GetInt()
+
+	pOperator:FireBullets(bulletInfo)
+
+	pOperator:MuzzleFlash();
+	self:SetClip1(self:Clip1() - 1)
 end
