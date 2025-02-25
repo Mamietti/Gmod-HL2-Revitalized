@@ -19,6 +19,9 @@ ADD_ITEM( "Flare Ammo", "item_flare_round" )
 ADD_ITEM( "Flare Ammo (Large)", "item_box_flare_rounds" )
 ADD_ITEM( "Sniper Ammo", "item_box_sniper_rounds" )
 
+ADD_WEAPON( "Annabelle", "weapon_annabelle" )
+ADD_WEAPON( "Alyx Gun", "weapon_alyxgun" )
+
 
 if CLIENT then
 	surface.CreateFont( "WeaponIconsLarge", {
@@ -92,3 +95,19 @@ game.AddAmmoType( {
 	maxsplash = 5,
     maxcarry = 20
 } )
+
+hook.Add( "PlayerCanPickupWeapon", "HL2WeaponsStrafeReplaceWeapons", function( ply, wep )
+    if GetConVar( "hl2weapons_strafe_replace_weapons" ):GetInt()!=1 then return true end
+	if wep:GetClass() == "weapon_annabelle" then
+		ply:Give( "weapon_annabelle_player" )
+		wep:Remove()
+		return false
+	end
+	if wep:GetClass() == "weapon_alyxgun" then
+		ply:Give( "weapon_alyxgun_player" )
+		wep:Remove()
+		return false
+	end
+end )
+
+convar = CreateConVar( "hl2weapons_strafe_replace_weapons", 1, 128, "Defines whether Annabelle and Alyx Gun are replaced with hexed versions")
