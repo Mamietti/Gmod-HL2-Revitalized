@@ -41,32 +41,6 @@ if CLIENT then
         blursize = 15,
         scanlines = 7
 	} )
-
-	surface.CreateFont( "CSWeaponIconsLarge", {
-		font = "csd",
-		size = 150,
-		weight = 0,
-		additive = true,
-        antialias = true,
-        custom = true
-	} )
-    surface.CreateFont( "CSWeaponIconsSelectedLarge", {
-		font = "csd",
-		size = 150,
-		weight = 0,
-		blursize = 0,
-		additive = true,
-        blursize = 15,
-        scanlines = 7
-	} )
-	surface.CreateFont( "CSKillIcons", {
-		font = "csd",
-		size = 70,
-		weight = 0,
-		additive = true,
-        antialias = true,
-        custom = true
-	} )
     
     language.Add( "SniperRound_ammo", "Sniper Ammo" )
     language.Add( "Manhack_ammo", "Manhacks" )
