@@ -74,7 +74,9 @@ function ENT:Sparks(pos)
 	local effectdata = EffectData()
 	effectdata:SetOrigin( pos )
 	effectdata:SetStart( pos )
-	effectdata:SetMagnitude( 1 )
+	effectdata:SetMagnitude(0.5)
+	effectdata:SetScale(0.5);
+	effectdata:SetRadius(0.1);
 	util.Effect( "Sparks", effectdata )
 end
 
