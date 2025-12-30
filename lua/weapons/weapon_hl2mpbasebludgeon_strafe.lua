@@ -27,6 +27,8 @@ SWEP.MELEE_HIT = "Weapon_Crowbar.Melee_Hit"
 
 SWEP.BLUDGEON_HULL_DIM = 16
 SWEP.HitActivity = ACT_VM_HITCENTER
+SWEP.MissActivity = ACT_VM_MISSCENTER
+SWEP.MissActivity2 = ACT_VM_MISSCENTER2
 SWEP.DamageType = DMG_CLUB
 
 function SWEP:Initialize()
@@ -239,9 +241,9 @@ function SWEP:Swing(IsSecondary)
 	if traceHit.Fraction == 1.0 then
 		self:WeaponSound( self.SINGLE )
 		if bIsSecondary then
-			nHitActivity = ACT_VM_MISSCENTER2
+			nHitActivity = self.MissActivity2
 		else
-			nHitActivity = ACT_VM_MISSCENTER
+			nHitActivity = self.MissActivity
 		end
 
 		testEnd = swingStart + forward * self:GetRange()
