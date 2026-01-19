@@ -71,7 +71,7 @@ game.AddAmmoType( {
 } )
 
 hook.Add( "PlayerCanPickupWeapon", "HL2WeaponsStrafeReplaceWeapons", function( ply, wep )
-    if GetConVar( "hl2weapons_strafe_replace_weapons" ):GetInt()!=1 then return true end
+    if GetConVar( "alyxgun_annabelle_pickupable" ):GetInt()!=1 then return true end
 	if wep:GetClass() == "weapon_annabelle" then
 		ply:Give( "weapon_annabelle_player" )
 		wep:Remove()
@@ -84,4 +84,4 @@ hook.Add( "PlayerCanPickupWeapon", "HL2WeaponsStrafeReplaceWeapons", function( p
 	end
 end )
 
-convar = CreateConVar( "hl2weapons_strafe_replace_weapons", 1, 128, "Defines whether Annabelle and Alyx Gun are replaced with hexed versions")
+convar = CreateConVar( "alyxgun_annabelle_pickupable", 1, 128, "Defines whether Annabelle and Alyx Gun are replaced with player-optimized versions on pickup")
